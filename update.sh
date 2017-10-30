@@ -14,7 +14,7 @@ sed -i "" "s/COPY/# COPY/g" Dockerfile
 
 mv sources.list sources.cn.list && cp sources.list.default sources.list
 
-mkdir alpine && cd alpine
+mkdir alpine3.4 && cd alpine3.4
 
 cp -a ~/lnmp/dockerfile/php-fpm-alpine/. .
 
