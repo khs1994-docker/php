@@ -1,4 +1,4 @@
-FROM php:7.1.10-fpm-alpine
+FROM php:7.1.11-fpm-alpine3.4
 
 # 替换源
 
@@ -20,11 +20,12 @@ ENV KHS1994_PHP_FPM_DEPS \
                          cyrus-sasl-dev \
                          postgresql-dev \
                          zlib-dev \
-                         tzdata
+                         tzdata \
+                         sqlite-dev
 
 RUN set -xe \
         && apk add --no-cache $KHS1994_PHP_FPM_DEPS \
-        && docker-php-ext-install -j "$(nproc)" iconv mcrypt pdo_pgsql pdo_mysql zip \
+        && docker-php-ext-install -j "$(nproc)" bcmath iconv mcrypt pdo_pgsql pdo_mysql pdo_sqlite zip \
         && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-install -j "$(nproc)" gd \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
@@ -58,5 +59,9 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && composer global require "laravel/installer" \
  && ln -sf /tmp/vendor/laravel/installer/laravel /usr/local/bin/ \
  && rm -rf /tmp/cache /tmp/.htaccess
+
+ENV PS1="[\u@\h \w]# "
+
+# RUN apk add --no-cache vim
 
 WORKDIR /app
