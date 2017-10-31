@@ -4,10 +4,8 @@
 
 # Supported tags and respective `Dockerfile` links
 
-* [`7.1.11-alpine`,`latest-alpine` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/alpine/Dockerfile)
-* [`7.1.11`,`latest` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/Dockerfile)
-* [`7.1.10-alpine` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.10/7.1/alpine/Dockerfile)
-* [`7.1.10`, (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.10/7.1/Dockerfile)
+* [`7.1.11-alpine3.4`,`latest-alpine3.4` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/alpine/Dockerfile)
+* [`7.1.11-jessie`,`latest` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/Dockerfile)
 
 # Overview
 
@@ -18,13 +16,13 @@
 based Alpine
 
 ```bash
-$ docker pull khs1994/php-fpm:7.1.10-alpine
+$ docker pull khs1994/php-fpm:latest-alpine3.4
 ```
 
 Or based Debian
 
 ```bash
-$ docker pull khs1994/php-fpm:7.1.10
+$ docker pull khs1994/php-fpm:latest
 ```
 
 # Who use it?
