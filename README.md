@@ -4,8 +4,10 @@
 
 # Supported tags and respective `Dockerfile` links
 
-* [`7.1.11-alpine3.4`,`latest-alpine3.4` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/alpine3.4/Dockerfile)
-* [`7.1.11-jessie`,`latest` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/Dockerfile)
+* [`7.1.12-alpine3.4`,`latest-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/alpine3.4/Dockerfile)
+* [`7.1.12-jessie`,`latest` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/Dockerfile)
+* [`7.1.11-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/alpine3.4/Dockerfile)
+* [`7.1.11-jessie` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/Dockerfile)
 
 # Overview
 
