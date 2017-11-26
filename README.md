@@ -14,8 +14,6 @@
 
 # Pull
 
-based Alpine
-
 ```bash
 $ docker pull khs1994/php-fpm:latest-alpine3.4
 ```
@@ -33,5 +31,3 @@ Please use `docker-compose`, example see [khs1994-docker/lnmp](https://github.co
 * [khs1994-docker/lnmp](https://github.com/khs1994-docker/lnmp)
 
 * [Official PHP Dockerfiles](https://github.com/docker-library/php)
-
-* [Official PHP Dockerfiles README](https://github.com/docker-library/docs/tree/master/php)
