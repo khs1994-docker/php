@@ -4,8 +4,8 @@
 
 # Supported tags and respective `Dockerfile` links
 
+* [`7.1.12-alpine3.4`, `alpine`, `latest` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/alpine3.4/Dockerfile)
 * [`7.1.11-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/alpine3.4/Dockerfile)
-* [`7.1.11-jessie` (7.1/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.11/7.1/Dockerfile)
 
 # Overview
 
@@ -13,16 +13,8 @@
 
 # Pull
 
-based Alpine
-
 ```bash
-$ docker pull khs1994/php-fpm:latest-alpine3.4
-```
-
-Or based Debian
-
-```bash
-$ docker pull khs1994/php-fpm:latest
+$ docker pull khs1994/php-fpm:alpine3.4
 ```
 
 # RUN
@@ -38,5 +30,3 @@ Please use `docker-compose`, example see [khs1994-docker/lnmp](https://github.co
 * [khs1994-docker/lnmp](https://github.com/khs1994-docker/lnmp)
 
 * [Official PHP Dockerfiles](https://github.com/docker-library/php)
-
-* [Official PHP Dockerfiles README](https://github.com/docker-library/docs/tree/master/php)
