@@ -15,7 +15,7 @@
 # Pull
 
 ```bash
-$ docker pull khs1994/php-fpm:latest-alpine3.4
+$ docker pull khs1994/php-fpm:alpine3.4
 ```
 
 # RUN
