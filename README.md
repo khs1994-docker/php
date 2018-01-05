@@ -5,6 +5,7 @@
 # Supported tags and respective `Dockerfile` links
 
 * [`7.2.1-alpine3.7`, `alpine`, `latest` (7.2/alpine3.7/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.2.1/7.2/alpine3.7/Dockerfile)
+
 * [`7.1.12-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/alpine3.4/Dockerfile)
 
 # Overview
