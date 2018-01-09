@@ -4,9 +4,9 @@
 
 # Supported tags and respective `Dockerfile` links
 
-* [`7.2.0-alpine3.6`, `alpine`, `latest` (7.2/alpine3.6/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.2.0/7.2/alpine3.6/Dockerfile)
-* [`7.1.12-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/alpine3.4/Dockerfile)
+* [`7.2.1-alpine3.7`, `alpine`, `latest` (7.2/alpine3.7/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.2.1/7.2/alpine3.7/Dockerfile)
 
+* [`7.1.12-alpine3.4` (7.1/alpine3.4/Dockerfile)](https://github.com/khs1994-docker/php-fpm/blob/7.1.12/7.1/alpine3.4/Dockerfile)
 
 # Overview
 
@@ -15,7 +15,7 @@
 # Pull
 
 ```bash
-$ docker pull khs1994/php-fpm:alpine3.4
+$ docker pull khs1994/php-fpm:alpine
 ```
 
 # RUN

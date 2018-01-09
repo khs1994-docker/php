@@ -1,4 +1,4 @@
-FROM php:7.2.0-fpm-alpine3.7
+FROM php:7.2.1-fpm-alpine3.7
 
 ENV TZ=Asia/Shanghai
 
@@ -33,15 +33,15 @@ RUN set -xe \
         && apk add --no-cache --virtual .khs1994-php-fpm-build_deps $KHS1994_PHP_FPM_BUILD_DEPS \
         && docker-php-ext-configure zip \
                                     --with-libzip \
-        && docker-php-ext-install zip \
-        && docker-php-ext-install -j "$(nproc)" bcmath \
-                                                pdo_pgsql \
-                                                pdo_mysql \
-                                                opcache \
         && docker-php-ext-configure gd \
                                     --with-freetype-dir=/usr/include/ \
                                     --with-jpeg-dir=/usr/include/ \
-        && docker-php-ext-install -j "$(nproc)" gd \
+        && docker-php-ext-install -j"$(nproc)" bcmath \
+                                               pdo_pgsql \
+                                               pdo_mysql \
+                                               opcache \
+                                               zip \
+                                               gd \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         && pecl install mongodb \
                         redis \
@@ -52,13 +52,14 @@ RUN set -xe \
                                  redis \
                                  memcached \
                                  xdebug \
-        && apk del .build-deps
+        && apk del .build-deps \
+        && rm -rf /tmp/*
 
 # install composer
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HOME /tmp
-ENV COMPOSER_VERSION 1.5.5
+ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
+    COMPOSER_VERSION=1.6.2 \
+    PS1="[\u@\h \w]# "
 
 RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
     && echo "date.timezone=${PHP_TIMEZONE:-PRC}" > "$PHP_INI_DIR/conf.d/date_timezone.ini" \
@@ -78,7 +79,7 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  # laravel 安装程序
  && composer global require "laravel/installer" \
  && ln -sf /tmp/vendor/laravel/installer/laravel /usr/local/bin/ \
- && rm -rf /tmp/cache /tmp/.htaccess \
+ && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
  # 默认不启用 xdebug
  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
  # 创建日志文件夹
@@ -90,8 +91,6 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && sed -i 's/www-data/root/g' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's/^error_log.*/error_log = \/var\/log\/php-fpm\/error.log/g' /usr/local/etc/php-fpm.d/docker.conf \
  && sed -i 's/^access.log.*/access.log = \/var\/log\/php-fpm\/access.log/g' /usr/local/etc/php-fpm.d/docker.conf
-
-ENV PS1="[\u@\h \w]# "
 
 # RUN apk add --no-cache vim
 
