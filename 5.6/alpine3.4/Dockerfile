@@ -1,5 +1,3 @@
-ARG PHP_VERSION=5.6.0
-
 #
 # NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
 #
@@ -8,7 +6,7 @@ ARG PHP_VERSION=5.6.0
 
 FROM alpine:3.4
 
-ARG PHP_VERSION=5.6.0
+ARG PHP_VERSION=5.6.10
 
 # persistent / runtime deps
 ENV PHPIZE_DEPS \
