@@ -6,7 +6,7 @@
 
 FROM alpine:3.4
 
-ARG PHP_VERSION=7.0.20
+ARG PHP_VERSION=7.0.27
 
 # persistent / runtime deps
 ENV PHPIZE_DEPS \
