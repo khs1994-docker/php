@@ -14,7 +14,7 @@ services:
       context: ./7.1/alpine3.4
       args:
         PHP_VERSION: ${PHP_VERSION_7_1_X}
-        ALPINE_URL: mirrors.ustc.edu.cn
+        # ALPINE_URL: mirrors.ustc.edu.cn
     image: ${DOCKER_HUB_USERNAME}/php-fpm:${PHP_VERSION_7_1_X}-alpine3.4
 
   7_0_X:
