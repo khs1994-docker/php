@@ -12,18 +12,28 @@ ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
 RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
     && set -xe \
-    # 新增的包
-    && KHS1994_PHP_FPM_APKS=" \
-                          git \
-                          # 以下两个均为版本控制系统
-                          # subversion \
-                          # mercurial \
-                          openssh-client \
-                          bash \
-                          tini \
-                          tzdata \
-                          " \
+      # 新增的包
+      && KHS1994_PHP_FPM_APKS=" \
+                            git \
+                            # 以下两个均为版本控制系统
+                            # subversion \
+                            # mercurial \
+                            openssh-client \
+                            bash \
+                            tini \
+                            tzdata \
+                            " \
       # 不要删除
+      && KHS1994_PHP_FPM_RUN_DEPS=" \
+                         libmemcached \
+                         libpq \
+                         zlib \
+                         libpng \
+                         freetype \
+                         libjpeg-turbo \
+                         yaml \
+                         " \
+      # *-dev 编译之后删除
       && KHS1994_PHP_FPM_BUILD_DEPS=" \
                          openssl-dev \
                          libmemcached-dev \
@@ -35,9 +45,10 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          libjpeg-turbo-dev \
                          yaml-dev \
                          " \
+        && apk add --no-cache --virtual .khs1994-php-fpm-run-deps $KHS1994_PHP_FPM_RUN_DEPS \
         && apk add --no-cache linux-headers \
         && apk add --no-cache --virtual .khs1994-php-fpm-apks $KHS1994_PHP_FPM_APKS \
-        && apk add --no-cache --virtual .khs1994-php-fpm-build_deps $KHS1994_PHP_FPM_BUILD_DEPS \
+        && apk add --no-cache --virtual .khs1994-php-fpm-build-deps $KHS1994_PHP_FPM_BUILD_DEPS \
         && docker-php-ext-configure gd \
                                     --with-freetype-dir=/usr/include/ \
                                     --with-jpeg-dir=/usr/include/ \
@@ -46,6 +57,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                   pdo_mysql \
                                   zip \
                                   gd \
+                                  pcntl \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         && pecl install mongodb \
                         igbinary \
@@ -61,9 +73,10 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                  xdebug \
                                  yaml \
                                  igbinary \
+                                 # opcache 已默认安装，需要自行载入
                                  opcache \
                                  swoole \
-        && apk del .build-deps linux-headers \
+        && apk del .build-deps linux-headers .khs1994-php-fpm-build-deps \
         && rm -rf /tmp/*
 
 # install composer
@@ -88,7 +101,8 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
  && composer --ansi --version --no-interaction \
  && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.6/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
- && chmod +x /docker-entrypoint.composer.sh \
+ && curl -fsSL https://raw.githubusercontent.com/khs1994-docker/lnmp/master/config/php/docker-entrypoint.crond.sh > /docker-entrypoint.crond.sh \
+ && chmod +x /docker-entrypoint.composer.sh /docker-entrypoint.crond.sh \
  # composer 中国镜像
  && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
  # laravel 安装程序
