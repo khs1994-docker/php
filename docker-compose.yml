@@ -5,7 +5,7 @@ services:
     build:
       context: ./7.2/alpine3.7
       args:
-        PHP_VERSION: ${PHP_VERSION_7_2_X:-7.2.3}
+        PHP_VERSION: ${PHP_VERSION_7_2_X:-7.2.4}
         ALPINE_URL: mirrors.ustc.edu.cn
     image: ${DOCKER_HUB_USERNAME:-khs1994}/php-fpm:${PHP_VERSION_7_2_X:-7.2.3}-alpine3.7
 
@@ -13,7 +13,7 @@ services:
     build:
       context: ./7.1/alpine3.4
       args:
-        PHP_VERSION: ${PHP_VERSION_7_1_X:-7.1.15}
+        PHP_VERSION: ${PHP_VERSION_7_1_X:-7.1.16}
         # ALPINE_URL: mirrors.ustc.edu.cn
     image: ${DOCKER_HUB_USERNAME:-khs1994}/php-fpm:${PHP_VERSION_7_1_X:-7.1.15}-alpine3.4
 
@@ -21,7 +21,7 @@ services:
     build:
       context: ./7.0/alpine3.4
       args:
-        PHP_VERSION: ${PHP_VERSION_7_0_X:-7.0.28}
+        PHP_VERSION: ${PHP_VERSION_7_0_X:-7.0.29}
         # PHP_URL: http://cn2.php.net/get/php-${PHP_VERSION_7_0_X}.tar.xz/from/this/mirror
         # ALPINE_URL: mirrors.ustc.edu.cn
     image: ${DOCKER_HUB_USERNAME:-khs1994}/php-fpm:${PHP_VERSION_7_0_X:-7.0.28}-alpine3.4
@@ -30,7 +30,7 @@ services:
     build:
       context: ./5.6/alpine3.4
       args:
-        PHP_VERSION: ${PHP_VERSION_5_6_X:-5.6.34}
+        PHP_VERSION: ${PHP_VERSION_5_6_X:-5.6.35}
         # PHP_URL: http://cn2.php.net/get/php-${PHP_VERSION_5_6_X}.tar.xz/from/this/mirror
         # ALPINE_URL: mirrors.ustc.edu.cn
     image: ${DOCKER_HUB_USERNAME:-khs1994}/php-fpm:${PHP_VERSION_5_6_X:-5.6.34}-alpine3.4
