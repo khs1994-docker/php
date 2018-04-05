@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.2.3
+ARG PHP_VERSION=7.2.4
 
 FROM php:${PHP_VERSION}-fpm-alpine3.7
 
@@ -54,6 +54,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && docker-php-ext-configure zip \
                                     --with-libzip \
         && docker-php-ext-configure gd \
+                                    --disable-gd-jis-conv \
                                     --with-freetype-dir=/usr/include/ \
                                     --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-install -j"$(nproc)" bcmath \
