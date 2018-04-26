@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.2.4
+ARG PHP_VERSION=7.2.5
 
 FROM php:${PHP_VERSION}-fpm-alpine3.7
 
@@ -83,11 +83,14 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                  swoole \
         && apk del .build-deps linux-headers .khs1994-php-fpm-build-deps \
         && rm -rf /tmp/*
+        # config opcache
+        # && echo 'opcache.enable_cli=1' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini \
+        # && echo 'opcache.file_cache=/tmp' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini
 
 # install composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
-    COMPOSER_VERSION=1.6.3 \
+    COMPOSER_VERSION=1.6.4 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
@@ -111,7 +114,14 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
  # laravel 安装程序
  && composer global require "laravel/installer" \
- && ln -sf /tmp/vendor/laravel/installer/laravel /usr/local/bin/ \
+ # php-cs-fixer
+ # https://github.com/FriendsOfPHP/PHP-CS-Fixer
+ && composer global require "friendsofphp/php-cs-fixer" \
+ # Sami an API documentation generator
+ # https://github.com/FriendsOfPHP/Sami
+ && curl -fsSL http://get.sensiolabs.org/sami.phar > /usr/local/bin/sami \
+ && ln -sf /tmp/vendor/bin/* /usr/local/bin \
+ && chmod +x /usr/local/bin/* \
  && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
  # 默认不启用 xdebug
  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
