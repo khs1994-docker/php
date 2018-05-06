@@ -130,6 +130,9 @@ RUN set -xe \
 		--with-libedit \
 		--with-openssl \
 		--with-zlib \
+    # https://github.com/docker-library/php/issues/439
+    --with-mhash \
+    --enable-option-checking=fatal \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
@@ -277,7 +280,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
 # install composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
-    COMPOSER_VERSION=1.6.3 \
+    COMPOSER_VERSION=1.6.5 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
