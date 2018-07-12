@@ -23,9 +23,9 @@ ENV PHPIZE_DEPS \
 		re2c
 
 # persistent / runtime deps
-RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+RUN set -ex \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
     && apk add --no-cache --virtual .persistent-deps \
-		ca-certificates \
 		curl \
 		tar \
 		xz \
@@ -67,8 +67,6 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
             --with-png-dir=/usr \
             --with-webp-dir=/usr \
             --with-xpm-dir=/usr \
-        --with-kerberos \
-            --with-system-ciphers \
         --with-pcre-regex \
         --with-pdo-mysql=shared \
         --with-pdo-pgsql=shared \
@@ -89,16 +87,15 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
             --with-libzip \
         --enable-calendar=shared \
         --enable-intl=shared \
-    		\
         --enable-exif=shared \
         --with-bz2=shared \
         --with-tidy=shared \
         --with-gmp=shared \
         --with-imap=shared \
+            --with-kerberos \
             --with-imap-ssl \
         --with-icu-dir=/usr \
         --with-xmlrpc=shared \
-        \
         --with-pic \
         --with-enchant=shared \
         --enable-fileinfo=shared \
@@ -125,11 +122,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
-ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+ENV GPG_KEYS CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
 
-# ENV PHP_VERSION ${PHP_VERSION}
-# ENV PHP_URL="https://secure.php.net/get/php-7.2.7.tar.xz/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.7.tar.xz.asc/from/this/mirror"
-# ENV PHP_SHA256="eb01c0153b3baf1f64b8b044013ce414b52fede222df3f509e8ff209478f31f0" PHP_MD5=""
+ENV PHP_VERSION 7.3.0alpha4
+ENV PHP_URL="https://downloads.php.net/~cmb/php-7.3.0alpha4.tar.xz" PHP_ASC_URL="https://downloads.php.net/~cmb/php-7.3.0alpha4.tar.xz.asc"
+ENV PHP_SHA256="32670f40aecce130727d841e3191d30237caff643a239d3c16cd579e762bc4c6" PHP_MD5=""
 
 COPY --from=php:alpine /usr/local/bin/docker-php-source /usr/local/bin/
 COPY --from=php:alpine /usr/local/bin/docker-php-entrypoint /usr/local/bin/
@@ -141,15 +138,14 @@ RUN set -xe; \
 	\
 	apk add --no-cache --virtual .fetch-deps \
 		gnupg \
-		wget \
 	; \
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
-  git clone --depth=1 https://github.com/php/php-src.git php; \
-	# \
-	# wget -O php.tar.xz "$PHP_URL"; \
-	# \
+  # git clone --depth=1 https://github.com/php/php-src.git php; \
+	\
+	wget -O php.tar.xz "$PHP_URL"; \
+	\
 	# if [ -n "$PHP_SHA256" ]; then \
 	# 	echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
 	# fi; \
@@ -207,7 +203,7 @@ RUN set -xe; \
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
-	# && docker-php-source extract \
+	&& docker-php-source extract \
 	&& cd /usr/src/php \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
   && ./buildconf --force \
@@ -293,7 +289,11 @@ RUN set -xe; \
   && apk del .build-deps \
 # https://github.com/docker-library/php/issues/443
   && pecl update-channels \
-	&& rm -rf /tmp/pear ~/.pearrc
+	&& rm -rf /tmp/pear ~/.pearrc \
+# tar /usr/local/lib/libphp7. so
+  && cd /usr/local/lib \
+  && tar -zcvf libphp7.so.tar.gz libphp7.so \
+  && rm -rf libphp7.so
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium
@@ -344,7 +344,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
 
 # https://github.com/composer/docker
 
-RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
+RUN set -ex \
+    && echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
     && echo "date.timezone=${PHP_TIMEZONE:-PRC}" > "$PHP_INI_DIR/conf.d/date_timezone.ini" \
     && curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/b107d959a5924af895807021fcef4ffec5a76aa9/web/installer \
     && php -r " \
@@ -361,16 +362,16 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && chmod +x /docker-entrypoint.composer.sh \
 # composer 中国镜像
  && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
-# laravel 安装程序
- && composer global require --prefer-dist "laravel/installer" \
-# php-cs-fixer
-# https://github.com/FriendsOfPHP/PHP-CS-Fixer
- && composer global require --prefer-dist "friendsofphp/php-cs-fixer" \
-# Sami an API documentation generator
-# https://github.com/FriendsOfPHP/Sami
- && curl -fsSL http://get.sensiolabs.org/sami.phar > /usr/local/bin/sami \
- && ln -sf /tmp/vendor/bin/* /usr/local/bin \
- && chmod +x /usr/local/bin/sami \
+# # laravel 安装程序
+#  && composer global require --prefer-dist "laravel/installer" \
+# # php-cs-fixer
+# # https://github.com/FriendsOfPHP/PHP-CS-Fixer
+#  && composer global require --prefer-dist "friendsofphp/php-cs-fixer" \
+# # Sami an API documentation generator
+# # https://github.com/FriendsOfPHP/Sami
+#  && curl -fsSL http://get.sensiolabs.org/sami.phar > /usr/local/bin/sami \
+#  && ln -sf /tmp/vendor/bin/* /usr/local/bin \
+#  && chmod +x /usr/local/bin/sami \
  && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
 # 创建日志文件夹
  && mkdir -p /var/log/php-fpm \
@@ -389,27 +390,28 @@ ENV PECL_RUN_DEPS \
       libmemcached \
       yaml
 
-RUN apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
+RUN set -ex \
+    && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
     && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
     && pecl install mongodb-beta \
                   igbinary-beta \
                   redis-beta \
-                  memcached-beta \
+                  # memcached-beta \
                   # 安装测试版的扩展，可以在扩展名后加 -beta
-                  xdebug-beta \
-                  yaml-beta \
-                  swoole-beta \
+                  # xdebug-beta \
+                  # yaml-beta \
+                  # swoole-beta \
   && docker-php-ext-enable mongodb \
                                redis \
-                               memcached \
-                               xdebug \
-                               yaml \
-                               igbinary \
-                               swoole \
+                               # memcached \
+                               # xdebug \
+                               # yaml \
+                               # igbinary \
+                               # swoole \
   && apk del .pecl_build_deps \
   \
 # 默认不启用 xdebug
-  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+  # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
   && rm -rf /tmp/*
 
 EXPOSE 9000
