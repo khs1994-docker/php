@@ -173,6 +173,6 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && curl -fsSL http://get.sensiolabs.org/sami.phar > /usr/local/bin/sami \
  && ln -sf /tmp/vendor/bin/* /usr/local/bin \
  && chmod +x /usr/local/bin/sami \
- && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
+ && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub
 
 WORKDIR /app
