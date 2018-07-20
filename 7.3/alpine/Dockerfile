@@ -5,7 +5,7 @@ LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 ENV TZ=Asia/Shanghai \
     APP_ENV=development
 
-# ARG PHP_VERSION=7.2.7
+# ARG PHP_VERSION=7.3.0alpha4
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
@@ -28,7 +28,7 @@ RUN set -ex \
     && apk add --no-cache --virtual .persistent-deps \
                  curl \
                  tar \
-		             xz \
+                 xz \
 # https://github.com/docker-library/php/issues/494
                  libressl \
                  git \
@@ -347,23 +347,23 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
 # https://github.com/composer/docker
 
 RUN set -ex \
-    && echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
-    && echo "date.timezone=${PHP_TIMEZONE:-PRC}" > "$PHP_INI_DIR/conf.d/date_timezone.ini" \
-    && curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/b107d959a5924af895807021fcef4ffec5a76aa9/web/installer \
-    && php -r " \
-    \$signature = '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061'; \
-    \$hash = hash('SHA384', file_get_contents('/tmp/installer.php')); \
-    if (!hash_equals(\$signature, \$hash)) { \
-        unlink('/tmp/installer.php'); \
-        echo 'Integrity check failed, installer is either corrupt or worse.' . PHP_EOL; \
-        exit(1); \
-    }" \
- && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
- && composer --ansi --version --no-interaction \
- && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.6/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
- && chmod +x /docker-entrypoint.composer.sh \
+      && echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
+      && echo "date.timezone=${PHP_TIMEZONE:-PRC}" > "$PHP_INI_DIR/conf.d/date_timezone.ini" \
+      && curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/b107d959a5924af895807021fcef4ffec5a76aa9/web/installer \
+      && php -r " \
+        \$signature = '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061'; \
+        \$hash = hash('SHA384', file_get_contents('/tmp/installer.php')); \
+        if (!hash_equals(\$signature, \$hash)) { \
+          unlink('/tmp/installer.php'); \
+          echo 'Integrity check failed, installer is either corrupt or worse.' . PHP_EOL; \
+          exit(1); \
+        }" \
+      && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
+      && composer --ansi --version --no-interaction \
+      && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.6/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
+      && chmod +x /docker-entrypoint.composer.sh \
 # composer 中国镜像
- && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
+      && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
 # # laravel 安装程序
 #  && composer global require --prefer-dist "laravel/installer" \
 # # php-cs-fixer
@@ -374,13 +374,13 @@ RUN set -ex \
 #  && curl -fsSL http://get.sensiolabs.org/sami.phar > /usr/local/bin/sami \
 #  && ln -sf /tmp/vendor/bin/* /usr/local/bin \
 #  && chmod +x /usr/local/bin/sami \
- && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
+      && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
 # 创建日志文件夹
- && mkdir -p /var/log/php-fpm \
- && ln -sf /dev/stdout /var/log/php-fpm/access.log \
- && ln -sf /dev/stderr /var/log/php-fpm/error.log \
- && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
- && chmod -R 777 /var/log/php-fpm
+      && mkdir -p /var/log/php-fpm \
+      && ln -sf /dev/stdout /var/log/php-fpm/access.log \
+      && ln -sf /dev/stderr /var/log/php-fpm/error.log \
+      && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+      && chmod -R 777 /var/log/php-fpm
 
 ENV PECL_BUILD_DEPS \
       libmemcached-dev \
@@ -392,28 +392,24 @@ ENV PECL_RUN_DEPS \
       libmemcached \
       yaml
 
-RUN set -ex \
-    && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
-    && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
-    && pecl install mongodb-beta \
-                  igbinary-beta \
-                  redis-beta \
-                  # memcached-beta \
-                  # 安装测试版的扩展，可以在扩展名后加 -beta
-                  # xdebug-beta \
-                  # yaml-beta \
-                  # swoole-beta \
-  && docker-php-ext-enable mongodb \
-                               redis \
-                               # memcached \
-                               # xdebug \
-                               # yaml \
-                               # igbinary \
-                               # swoole \
-  && apk del .pecl_build_deps \
-  \
+ENV PECL_EXTENSION \
+      mongodb \
+      igbinary \
+      redis \
+      memcached \
+      xdebug \
+      yaml \
+      swoole
+
+RUN set -x \
+      && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
+      && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
+      && for extension in $PECL_EXTENSION; do pecl install ${extension}-beta; done \
+      && docker-php-ext-enable $PECL_EXTENSION \
+      && apk del .pecl_build_deps \
+    \
 # 默认不启用 xdebug
-  # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+# && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
   && rm -rf /tmp/*
 
 EXPOSE 9000
