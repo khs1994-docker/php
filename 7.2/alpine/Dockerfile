@@ -126,10 +126,17 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && apk del .build-deps .php-fpm-build-deps \
         && rm -rf /tmp/* \
         # 默认不启用 xdebug
-        && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default
+        && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+          /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
         # config opcache
         # && echo 'opcache.enable_cli=1' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini \
-        # && echo 'opcache.file_cache=/tmp' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini
+        # && echo 'opcache.file_cache=/tmp' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini \
+        # 创建日志文件夹
+        && mkdir -p /var/log/php-fpm \
+        && ln -sf /dev/stdout /var/log/php-fpm/access.log \
+        && ln -sf /dev/stderr /var/log/php-fpm/error.log \
+        && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+        && chmod -R 777 /var/log/php-fpm
 
 # install composer
 
@@ -167,11 +174,5 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && ln -sf /tmp/vendor/bin/* /usr/local/bin \
  && chmod +x /usr/local/bin/sami \
  && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
- # 创建日志文件夹
- && mkdir -p /var/log/php-fpm \
- && ln -sf /dev/stdout /var/log/php-fpm/access.log \
- && ln -sf /dev/stderr /var/log/php-fpm/error.log \
- && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
- && chmod -R 777 /var/log/php-fpm
 
 WORKDIR /app

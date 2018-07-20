@@ -12,20 +12,20 @@ ARG ALPINE_URL=dl-cdn.alpinelinux.org
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
-		autoconf \
-		dpkg-dev dpkg \
-		file \
-		g++ \
-		gcc \
-		libc-dev \
-		make \
-		pkgconf \
-		re2c
+      autoconf \
+      dpkg-dev dpkg \
+      file \
+      g++ \
+      gcc \
+      libc-dev \
+      make \
+      pkgconf \
+      re2c
 
 # persistent / runtime deps
 RUN set -ex \
-    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
-    && apk add --no-cache --virtual .persistent-deps \
+      && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+      && apk add --no-cache --virtual .persistent-deps \
                  curl \
                  tar \
                  xz \
@@ -41,8 +41,8 @@ RUN set -ex \
                  tzdata \
 # ensure www-data user exists
 # RUN set -x \
-	&& addgroup -g 82 -S www-data \
-	&& adduser -u 82 -D -S -G www-data www-data
+      && addgroup -g 82 -S www-data \
+      && adduser -u 82 -D -S -G www-data www-data
 # 82 is the standard uid/gid for "www-data" in Alpine
 # http://git.alpinelinux.org/cgit/aports/tree/main/apache2/apache2.pre-install?h=v3.3.2
 # http://git.alpinelinux.org/cgit/aports/tree/main/lighttpd/lighttpd.pre-install?h=v3.3.2
@@ -126,21 +126,19 @@ ENV PHP_VERSION 7.3.0alpha4
 ENV PHP_URL="https://downloads.php.net/~cmb/php-7.3.0alpha4.tar.xz" PHP_ASC_URL="https://downloads.php.net/~cmb/php-7.3.0alpha4.tar.xz.asc"
 ENV PHP_SHA256="32670f40aecce130727d841e3191d30237caff643a239d3c16cd579e762bc4c6" PHP_MD5=""
 
-COPY --from=php:alpine /usr/local/bin/docker-php-source /usr/local/bin/
-COPY --from=php:alpine /usr/local/bin/docker-php-entrypoint /usr/local/bin/
-COPY --from=php:alpine /usr/local/bin/docker-php-ext-configure /usr/local/bin/
-COPY --from=php:alpine /usr/local/bin/docker-php-ext-enable /usr/local/bin/
-COPY --from=php:alpine /usr/local/bin/docker-php-ext-install /usr/local/bin/
+COPY --from=php:alpine /usr/local/bin/docker-php-* /usr/local/bin/
+
+# COPY --from=php:alpine /usr/local/bin/docker-php-source /usr/local/bin/
+# COPY --from=php:alpine /usr/local/bin/docker-php-entrypoint /usr/local/bin/
+# COPY --from=php:alpine /usr/local/bin/docker-php-ext-configure /usr/local/bin/
+# COPY --from=php:alpine /usr/local/bin/docker-php-ext-enable /usr/local/bin/
+# COPY --from=php:alpine /usr/local/bin/docker-php-ext-install /usr/local/bin/
 
 RUN set -xe; \
-  mkdir -p $PHP_INI_DIR/conf.d; \
-	\
-	apk add --no-cache --virtual .fetch-deps \
-		gnupg \
-	; \
-	\
-	mkdir -p /usr/src; \
-	cd /usr/src; \
+  mkdir -p $PHP_INI_DIR/conf.d \
+  && apk add --no-cache --virtual .fetch-deps gnupg \
+	&& mkdir -p /usr/src \
+	&& cd /usr/src; \
   # git clone --depth=1 https://github.com/php/php-src.git php; \
 	\
 	wget -O php.tar.xz "$PHP_URL"; \
@@ -334,9 +332,44 @@ RUN set -xe; \
 		echo; \
 		echo '[www]'; \
 		echo 'listen = 9000'; \
-	} | tee php-fpm.d/zz-docker.conf
+	} | tee php-fpm.d/zz-docker.conf \
+  # 创建日志文件夹
+  && mkdir -p /var/log/php-fpm \
+  && ln -sf /dev/stdout /var/log/php-fpm/access.log \
+  && ln -sf /dev/stderr /var/log/php-fpm/error.log \
+  && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+  && chmod -R 777 /var/log/php-fpm
 
 ENTRYPOINT ["docker-php-entrypoint"]
+
+ENV PECL_BUILD_DEPS \
+      libmemcached-dev \
+      yaml-dev \
+      linux-headers \
+      libzip-dev
+
+ENV PECL_RUN_DEPS \
+      libmemcached \
+      yaml
+
+ENV PECL_EXTENSION \
+      mongodb \
+      igbinary \
+      redis \
+      memcached \
+      xdebug \
+      yaml \
+      swoole
+
+RUN set -x \
+      && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
+      && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
+      && for extension in $PECL_EXTENSION; do pecl install ${extension}-beta; done \
+      && docker-php-ext-enable $PECL_EXTENSION; \
+      apk del .pecl_build_deps \
+# 默认不启用 xdebug
+# && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+  && rm -rf /tmp/*
 
 # install composer
 
@@ -375,42 +408,6 @@ RUN set -ex \
 #  && ln -sf /tmp/vendor/bin/* /usr/local/bin \
 #  && chmod +x /usr/local/bin/sami \
       && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
-# 创建日志文件夹
-      && mkdir -p /var/log/php-fpm \
-      && ln -sf /dev/stdout /var/log/php-fpm/access.log \
-      && ln -sf /dev/stderr /var/log/php-fpm/error.log \
-      && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
-      && chmod -R 777 /var/log/php-fpm
-
-ENV PECL_BUILD_DEPS \
-      libmemcached-dev \
-      yaml-dev \
-      linux-headers \
-      libzip-dev
-
-ENV PECL_RUN_DEPS \
-      libmemcached \
-      yaml
-
-ENV PECL_EXTENSION \
-      mongodb \
-      igbinary \
-      redis \
-      memcached \
-      xdebug \
-      yaml \
-      swoole
-
-RUN set -x \
-      && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
-      && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
-      && for extension in $PECL_EXTENSION; do pecl install ${extension}-beta; done \
-      && docker-php-ext-enable $PECL_EXTENSION \
-      && apk del .pecl_build_deps \
-    \
-# 默认不启用 xdebug
-# && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
-  && rm -rf /tmp/*
 
 EXPOSE 9000
 CMD ["php-fpm"]

@@ -123,8 +123,15 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && docker-php-ext-enable $PECL_EXTENSION opcache \
         && apk del .build-deps .php-fpm-build-deps \
         # 默认不启用 xdebug
-        && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
-        && rm -rf /tmp/*
+        && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+          /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+        && rm -rf /tmp/* \
+        # 创建日志文件夹
+        && mkdir -p /var/log/php-fpm \
+        && ln -sf /dev/stdout /var/log/php-fpm/access.log \
+        && ln -sf /dev/stderr /var/log/php-fpm/error.log \
+        && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+        && chmod -R 777 /var/log/php-fpm
 
 # install composer
 
@@ -154,12 +161,6 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  # laravel 安装程序
  # && composer global require "laravel/installer" \
  # && ln -sf /tmp/vendor/laravel/installer/laravel /usr/local/bin/ \
- && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub \
- # 创建日志文件夹
- && mkdir -p /var/log/php-fpm \
- && ln -sf /dev/stdout /var/log/php-fpm/access.log \
- && ln -sf /dev/stderr /var/log/php-fpm/error.log \
- && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
- && chmod -R 777 /var/log/php-fpm
+ && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub
 
 WORKDIR /app
