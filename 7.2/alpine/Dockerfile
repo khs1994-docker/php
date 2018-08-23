@@ -33,7 +33,7 @@ ENV PHP_EXTENSION \
       zip
 
 ENV PECL_EXTENSION \
-      mongodb \
+      # mongodb \
       igbinary \
       redis \
       memcached \
