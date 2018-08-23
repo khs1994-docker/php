@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.1.20
+ARG PHP_VERSION=7.1.21
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
@@ -136,7 +136,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
 # install composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
-    COMPOSER_VERSION=1.7.0 \
+    COMPOSER_VERSION=1.7.1 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
