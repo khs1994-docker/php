@@ -1,6 +1,6 @@
 ARG PHP_VERSION=7.1.21
 
-FROM php:${PHP_VERSION}-fpm-alpine
+FROM php:${PHP_VERSION}-fpm-alpine as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -27,7 +27,7 @@ ENV PHP_EXTENSION \
       sysvmsg \
       sysvsem \
       sysvshm \
-# tidy \
+      # tidy \
       xmlrpc \
       xsl \
       zip
@@ -37,7 +37,7 @@ ENV PECL_EXTENSION \
       igbinary \
       redis \
       memcached \
-# 安装测试版的扩展，可以在扩展名后加 -beta
+      # 安装测试版的扩展，可以在扩展名后加 -beta
       xdebug \
       yaml \
       swoole
@@ -121,7 +121,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
         && for extension in $PECL_EXTENSION;do pecl install $extension; done \
         && docker-php-ext-enable $PECL_EXTENSION opcache \
-        && apk del .build-deps .php-fpm-build-deps \
+        && apk del --no-cache .build-deps .php-fpm-build-deps \
         # 默认不启用 xdebug
         && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
@@ -136,7 +136,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
 # install composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
-    COMPOSER_VERSION=1.7.1 \
+    COMPOSER_VERSION=1.7.2 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
@@ -156,11 +156,14 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && composer --ansi --version --no-interaction \
  && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.6/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
  && chmod +x /docker-entrypoint.composer.sh \
+ \
  # composer 中国镜像
- && composer config -g repo.packagist composer https://packagist.phpcomposer.com \
+ && composer config -g repo.packagist composer https://packagist.laravel-china.org \
+ \
  # laravel 安装程序
  # && composer global require "laravel/installer" \
  # && ln -sf /tmp/vendor/laravel/installer/laravel /usr/local/bin/ \
+ \
  && rm -rf /tmp/cache /tmp/.htaccess /tmp/installer.php /tmp/*.pub
 
 WORKDIR /app
