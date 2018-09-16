@@ -5,11 +5,11 @@ if [ "$1" = git ];then
   exec git reset --hard origin/master
 fi
 
-rm -rf 5* 7*
+rm -rf 5* 7* nightly
 
 if [ -z $WSL_HOME ];then
     cp -a ~/lnmp/dockerfile/php-fpm/. .
-    rm -rf .env    
+    rm -rf .env
     exit
 fi
 
