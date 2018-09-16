@@ -9,6 +9,14 @@ ENV TZ=Asia/Shanghai \
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
+ARG PHP_EXTENSION_EXTRA
+
+ARG PECL_EXTENSION_EXTRA
+
+ARG APK_EXTRA
+
+ARG APK_DEV_EXTRA
+
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
@@ -356,20 +364,20 @@ ENV PECL_RUN_DEPS \
       yaml
 
 ENV PECL_EXTENSION \
-      mongodb \
-      igbinary \
-      redis \
-      memcached \
-      xdebug \
-      yaml \
-      swoole
+      mongodb-beta \
+      igbinary-beta \
+      redis-beta \
+      memcached-beta \
+      xdebug-beta \
+      yaml-beta \
+      swoole-beta
 
 RUN set -x \
       && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
       && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
-      && for extension in $PECL_EXTENSION; \
-         do
-           pecl install ${extension}-beta;
+      && for extension in $PECL_EXTENSION;do \
+           pecl install $extension \
+             && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error"; \
          done \
       # && apk add --no-cache git openssh-client \
       # && git clone -b PHP-7.3-support --depth=1 https://github.com/derickr/xdebug.git \
@@ -381,7 +389,6 @@ RUN set -x \
       # && make install \
       # && cd - \
       # && rm -rf xdebug \
-      ; docker-php-ext-enable $PECL_EXTENSION \
       ; apk del --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
 # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \

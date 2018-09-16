@@ -4,6 +4,14 @@ FROM php:${PHP_VERSION}-fpm-alpine as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
+ARG PHP_EXTENSION_EXTRA
+
+ARG PECL_EXTENSION_EXTRA
+
+ARG APK_EXTRA
+
+ARG APK_DEV_EXTRA
+
 ENV TZ=Asia/Shanghai \
     APP_ENV=development
 
@@ -33,7 +41,7 @@ ENV PHP_EXTENSION \
       zip
 
 ENV PECL_EXTENSION \
-      # mongodb \
+      mongodb \
       igbinary \
       redis \
       memcached \
@@ -121,8 +129,11 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                         --with-xpm-dir=/usr \
         && docker-php-ext-install $PHP_EXTENSION \
         && apk add --no-cache --virtual .build-deps linux-headers $PHPIZE_DEPS \
-        && for extension in $PECL_EXTENSION;do pecl install $extension; done \
-        && docker-php-ext-enable $PECL_EXTENSION opcache \
+        && for extension in $PECL_EXTENSION;do \
+             pecl install $extension \
+               && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error"; \
+           done \
+        && docker-php-ext-enable opcache \
         && apk del --no-cache .build-deps .php-fpm-build-deps \
         && rm -rf /tmp/* \
         # 默认不启用 xdebug
