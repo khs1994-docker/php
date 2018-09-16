@@ -115,7 +115,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          libwebp-dev \
                          icu-dev \
                          libxpm-dev \
-                         ${APK_DEV_EXTRA:-}
+                         ${APK_DEV_EXTRA:-} \
                          " \
                          # libwebp-dev \
                          # tidyhtml-dev \

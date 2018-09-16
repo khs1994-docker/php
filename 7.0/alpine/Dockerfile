@@ -38,7 +38,8 @@ ENV PHP_EXTENSION \
       # tidy \
       xmlrpc \
       xsl \
-      zip
+      zip \
+      ${PHP_EXTENSION_EXTRA:-}
 
 ENV PECL_EXTENSION \
       mongodb \
@@ -48,7 +49,8 @@ ENV PECL_EXTENSION \
       # 安装测试版的扩展，可以在扩展名后加 -beta
       xdebug \
       yaml \
-      swoole
+      swoole \
+      ${PECL_EXTENSION_EXTRA:-}
 
 # 构建变量默认值为原始值，笔记本构建统一使用 docker-compose 构建
 # 国内镜像地址在 docker-compose.yml 中定义
@@ -88,6 +90,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          icu-libs \
                          libxpm \
                          libwebp \
+                         ${APK_EXTRA:-} \
                          " \
                          # tidyhtml-libs \
       # *-dev 编译之后删除
@@ -113,6 +116,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          icu-dev \
                          libxpm-dev \
                          libwebp-dev \
+                         ${APK_DEV_EXTRA:-} \
                          " \
                          # tidyhtml-dev \
         && apk add --no-cache --virtual .php-fpm-run-deps $PHP_FPM_RUN_DEPS \
