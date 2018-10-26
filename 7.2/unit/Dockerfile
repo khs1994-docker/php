@@ -45,8 +45,8 @@ RUN set -ex \
 # subversion \
 # mercurial \
                  # openssh-client \
-                 # bash \
                  # tini \
+                 bash \
                  tzdata \
 # ensure www-data user exists
 # RUN set -x \
@@ -211,7 +211,6 @@ RUN set -xe \
 	&& docker-php-source extract \
 	&& cd /usr/src/php \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-  && ./buildconf --force \
 	&& ./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -248,24 +247,6 @@ RUN set -xe \
 	&& make install \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
 # && docker-php-source delete \
-# unit
-  && cd /usr/src \
-  && wget https://github.com/nginx/unit/archive/${NGINX_UNIT_VERSION}.tar.gz \
-  && tar -zxvf ${NGINX_UNIT_VERSION}.tar.gz \
-  && mv unit-${NGINX_UNIT_VERSION} unit \
-  && cd /usr/src/unit \
-  && ./configure --prefix=/usr/local/nginx-unit --openssl \
-  && ./configure php \
-       --module=php72 \
-       --lib-path=/usr/local/lib \
-       --config=/usr/local/bin/php-config \
-  && make \
-  && make install \
-  && strip --strip-all /usr/local/nginx-unit/sbin/unitd \
-  && ln -sf /usr/local/nginx-unit/sbin/unitd /usr/local/sbin \
-  && rm -rf /usr/src/* \
-  && mkdir -p /var/log/nginx-unit \
-  && ln -sf /dev/stdout /var/log/nginx-unit/nginx-unit.log \
   \
   && docker-php-ext-enable bcmath \
                            bz2 \
@@ -317,7 +298,29 @@ RUN set -xe \
 # RUN docker-php-ext-enable sodium
   \
   # 创建日志文件夹
-  && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+  && ln -sf /dev/stderr /var/log/xdebug-remote.log \
+  && rm -rf /usr/src/*
+
+RUN cd /usr/src \
+  && wget https://github.com/nginx/unit/archive/${NGINX_UNIT_VERSION}.tar.gz \
+  && tar -zxvf ${NGINX_UNIT_VERSION}.tar.gz \
+  && mv unit-${NGINX_UNIT_VERSION} unit \
+  && cd /usr/src/unit \
+  && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libressl-dev \
+  && ./configure --prefix=/usr/local/nginx-unit --openssl \
+  && ./configure php \
+       --module=php72 \
+       --lib-path=/usr/local/lib \
+       --config=/usr/local/bin/php-config \
+  && make \
+  && make install \
+  && strip --strip-all /usr/local/nginx-unit/sbin/unitd \
+  && mkdir -p /usr/local/sbin \
+  && ln -sf /usr/local/nginx-unit/sbin/unitd /usr/local/sbin/unitd \
+  && apk del --no-cache .build-deps \
+  && rm -rf /usr/src/* \
+  && mkdir -p /var/log/nginx-unit \
+  && ln -sf /dev/stdout /var/log/nginx-unit/nginx-unit.log
 
 ENV PECL_BUILD_DEPS \
       libmemcached-dev \
@@ -350,6 +353,8 @@ RUN set -x \
 # 默认不启用 xdebug
 # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
       && rm -rf /tmp/*
+
+ENV PS1="[\u@\h \w]# "
 
 CMD ["unitd","--no-daemon","--user","root","--group","root","--log","/var/log/nginx-unit/nginx-unit.log"]
 
