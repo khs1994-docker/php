@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.3.0RC3
+ARG PHP_VERSION=7.3.0RC5
 
 FROM php:${PHP_VERSION}-fpm-alpine as php
 
@@ -162,7 +162,7 @@ ENV COMPOSER_DEP_APKS \
       tini
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_HOME=/tmp \
-    COMPOSER_VERSION=1.7.2 \
+    COMPOSER_VERSION=1.7.3 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
