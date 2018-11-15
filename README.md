@@ -6,17 +6,24 @@
 
 * http://php.net/supported-versions.php
 
+## 后缀
+
+* 7.2.12-fpm-alpine
+* 7.2.12-unit-alpine
+* 7.2.12-composer-alpine
+* 7.2.12-supervisord-alpine
+
 ## Supported tags and respective `Dockerfile` links
 
 * [`7.2.12-fpm-alpine`, `7.2-fpm-alpine`, `7-fpm-alpine`, `fpm-alpine`, `latest` (7.2/alpine/Dockerfile)](https://github.com/khs1994-docker/php/blob/7.2.12/7.2/alpine/Dockerfile)
 
-* [`7.1.23-fpm-alpine` `7.1-fpm-alpine` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php/blob/7.2.12/7.1/alpine/Dockerfile)
+* [`7.1.24-fpm-alpine` `7.1-fpm-alpine` (7.1/alpine/Dockerfile)](https://github.com/khs1994-docker/php/blob/7.2.12/7.1/alpine/Dockerfile)
 
 | VERSION     | DETAILS     |
 | :------------- | :------------- |
 | [![](https://images.microbadger.com/badges/version/khs1994/php:5.6.38-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:5.6.38-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:5.6.38-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:5.6.38-fpm-alpine "Get your own image badge on microbadger.com")       |
 | [![](https://images.microbadger.com/badges/version/khs1994/php:7.0.32-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.0.32-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:7.0.32-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.0.32-fpm-alpine "Get your own image badge on microbadger.com")       |
-| [![](https://images.microbadger.com/badges/version/khs1994/php:7.1.23-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.1.23-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:7.1.23-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.1.23-fpm-alpine "Get your own image badge on microbadger.com")       |
+| [![](https://images.microbadger.com/badges/version/khs1994/php:7.1.24-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.1.24-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:7.1.24-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.1.24-fpm-alpine "Get your own image badge on microbadger.com")       |
 | [![](https://images.microbadger.com/badges/version/khs1994/php:7.2.12-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.2.12-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:7.2.12-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.2.12-fpm-alpine "Get your own image badge on microbadger.com")       |
 | [![](https://images.microbadger.com/badges/version/khs1994/php:7.3.0RC5-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.3.0RC5-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:7.3.0RC5-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:7.3.0RC5-fpm-alpine "Get your own image badge on microbadger.com")       |
 | [![](https://images.microbadger.com/badges/version/khs1994/php:nightly-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:nightly-fpm-alpine "Get your own version badge on microbadger.com")       | [![](https://images.microbadger.com/badges/image/khs1994/php:nightly-fpm-alpine.svg)](https://microbadger.com/images/khs1994/php:nightly-fpm-alpine "Get your own image badge on microbadger.com")       |
@@ -38,10 +45,6 @@ Please use `docker-compose`, example see [khs1994-docker/lnmp](https://github.co
 ## Who use it?
 
 [khs1994-docker/lnmp](https://github.com/khs1994-docker/lnmp) use this Docker Image.
-
-## 镜像优化
-
-本镜像包含了 Composer 故又加上了 git。使得总体积增加了 20 M 左右，在大规模使用时，建议去除掉 git + composer 。或者参考官方镜像，构建符合自己业务的镜像。
 
 ## Extension
 
