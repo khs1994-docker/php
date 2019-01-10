@@ -70,14 +70,16 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-gettext=shared \
         --with-gd=shared \
             # https://github.com/php/php-src/commit/2d03197749696ac3f8effba6b7977b0d8729fef3
-            --enable-freetype \
+            # https://github.com/php/php-src/commit/285a077c1284544e938cd07cfa1fca3d56cf7726#diff-cc5a741d5e9ffea246bbe851c2635502
+            --with-freetype \
             # --with-freetype-dir=/usr \
             --disable-gd-jis-conv \
             --with-jpeg-dir=/usr \
             --with-png-dir=/usr \
             --with-webp-dir=/usr \
             --with-xpm-dir=/usr \
-        --with-pcre-regex \
+        # --with-pcre-regex \
+        --with-external-pcre \
         --with-pdo-mysql=shared \
         --with-pdo-pgsql=shared \
         --with-xsl=shared \
@@ -225,7 +227,6 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache set -xe \
 	&& cd /usr/src/php \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
   && ./buildconf --force \
-  && ./buildconf --help \
 	&& ./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
