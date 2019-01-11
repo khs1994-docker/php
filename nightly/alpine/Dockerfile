@@ -72,13 +72,13 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
             # https://github.com/php/php-src/commit/2d03197749696ac3f8effba6b7977b0d8729fef3
             # https://github.com/php/php-src/commit/285a077c1284544e938cd07cfa1fca3d56cf7726#diff-cc5a741d5e9ffea246bbe851c2635502
             --with-freetype \
-            # --with-freetype-dir=/usr \
+            # --with-freetype-dir=/usr \ 7.4 remove
             --disable-gd-jis-conv \
             --with-jpeg-dir=/usr \
             --with-png-dir=/usr \
             --with-webp-dir=/usr \
             --with-xpm-dir=/usr \
-        # --with-pcre-regex \
+        # --with-pcre-regex \ 7.4 remove
         --with-external-pcre \
         --with-pdo-mysql=shared \
         --with-pdo-pgsql=shared \
@@ -215,6 +215,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache set -xe \
           aspell-dev \
           openldap-dev \
           pcre-dev \
+          pcre2-dev \
           tidyhtml-dev \
           net-snmp-dev \
           openldap-dev \
