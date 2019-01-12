@@ -16,3 +16,6 @@ fi
 cp -a $WSL_HOME/lnmp/dockerfile/php-fpm/. .
 
 rm -rf .env
+
+# powershell
+# cp -r -force C:\Users\90621\lnmp\dockerfile\php-fpm\* C:\Users\90621\github\php-fpm\
