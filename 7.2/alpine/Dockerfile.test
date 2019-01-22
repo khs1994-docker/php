@@ -1,0 +1,194 @@
+ARG PHP_VERSION=7.2.14
+
+FROM php:${PHP_VERSION}-fpm-alpine as php
+
+LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
+
+ENV TZ=Asia/Shanghai \
+    APP_ENV=development
+
+ENV PHP_EXTENSION \
+      bz2 \
+      enchant \
+      exif \
+      gettext \
+      gmp \
+      imap \
+      intl \
+      pdo_pgsql \
+      pgsql \
+      sockets \
+      sysvmsg \
+      sysvsem \
+      sysvshm \
+      # tidy \
+      xmlrpc \
+      xsl
+
+ARG ALPINE_URL=dl-cdn.alpinelinux.org
+
+RUN apk add --no-cache bash tzdata
+
+RUN export EXT_NAME=bcmath \
+    # 替换源
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    # 安装依赖
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    # 安装扩展
+    && docker-php-ext-install $EXT_NAME \
+    # 启用扩展
+    && docker-php-ext-enable $EXT_NAME \
+    # 删除构建工具
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=zip \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache libzip \
+    && apk add --no-cache --virtual .build-deps libzip-dev $PHPIZE_DEPS \
+    && docker-php-ext-configure zip \
+                                --with-libzip \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=gd \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache libpng \
+                          freetype \
+                          libjpeg-turbo \
+                          libxpm \
+                          libwebp \
+    && apk add --no-cache --virtual .build-deps \
+                                      libpng-dev \
+                                      freetype-dev \
+                                      libjpeg-turbo-dev \
+                                      libxpm-dev \
+                                      libwebp-dev \
+                                      $PHPIZE_DEPS \
+    && docker-php-ext-configure gd \
+                                    --disable-gd-jis-conv \
+                                    --with-freetype-dir=/usr \
+                                    --with-jpeg-dir=/usr \
+                                    --with-png-dir=/usr \
+                                    --with-webp-dir=/usr \
+                                    --with-xpm-dir=/usr \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=pdo_mysql \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=mysqli \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=calendar \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+RUN export EXT_NAME=pcntl \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+
+
+
+                             c-client \
+                         libressl-dev \
+
+                         libpq \
+                         postgresql-dev \
+
+                         libexif \
+                         libexif-dev \
+
+                         libxslt \
+                         libxslt-dev \
+
+                         gmp \
+                         gmp-dev \
+
+                         xmlrpc-c \
+                         xmlrpc-c-dev \
+
+                         libbz2 \
+                         bzip2-dev \
+
+                         enchant \
+                         enchant-dev \
+
+                         imap-dev \
+
+                         gettext-dev \
+
+                         icu-libs \
+                         icu-dev \
+
+                         # tidyhtml-libs
+                         # tidyhtml-dev
+
+ENV PECL_EXTENSION \
+      mongodb \
+      igbinary \
+      redis \
+      memcached
+
+#      libmemcached \
+#      libmemcached-dev \
+#      cyrus-sasl-dev \
+
+RUN export EXT_NAME=yaml \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache yaml \
+    && apk add --no-cache --virtual .build-deps yaml-dev $PHPIZE_DEPS \
+    && pecl install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+    && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+         /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default
+
+RUN export EXT_NAME=xdebug \
+    && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install $EXT_NAME \
+    && docker-php-ext-enable $EXT_NAME \
+    && apk del --no-cache .build-deps
+    && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+         /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default
+
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+        # https://github.com/tideways/php-xhprof-extension.git
+        && cd /tmp \
+        && wget https://github.com/tideways/php-xhprof-extension/archive/master.zip \
+        && unzip master.zip \
+        && cd php-xhprof-extension-master \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+        && docker-php-ext-enable tideways_xhprof \
+        && apk del --no-cache .build-deps \
+        && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
+          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default
+
+# 创建日志文件夹
+RUN mkdir -p /var/log/php-fpm \
+      && ln -sf /dev/stdout /var/log/php-fpm/access.log \
+      && ln -sf /dev/stderr /var/log/php-fpm/error.log \
+      && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
+      && chmod -R 777 /var/log/php-fpm
+
+WORKDIR /app
