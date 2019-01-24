@@ -112,6 +112,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                          libxpm-dev \
                          libwebp-dev \
                          zlib-dev \
+                         nghttp2-dev \
                          ${APK_DEV_EXTRA:-} \
                          " \
                          # tidyhtml-dev \

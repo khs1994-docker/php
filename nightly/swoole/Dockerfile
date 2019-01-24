@@ -237,6 +237,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
           net-snmp-dev \
           openldap-dev \
           zlib-dev \
+          nghttp2-dev \
           ${APK_DEV_EXTRA:-} \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \

@@ -24,7 +24,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
     && for extension in $PHP_EXTENSION;do \
          docker-php-ext-install $extension \
          && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "${extension} install error" \
-         && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
          && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
        done \
     && apk del --no-cache .build-deps
@@ -290,7 +289,7 @@ RUN export EXT_NAME=xdebug \
 
 RUN export EXT_NAME=tideways_xhprof \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-        # https://github.com/tideways/php-xhprof-extension.git
+        # https://github.com/tideways/php-xhprof-extension
         && cd /tmp \
         && wget https://github.com/tideways/php-xhprof-extension/archive/master.zip \
         && unzip master.zip \
@@ -313,11 +312,11 @@ RUN export EXT_NAME=swoole \
                                           libressl-dev \
                                           nghttp2-dev \
                                           $PHPIZE_DEPS \
-        # https://github.com/tideways/php-xhprof-extension.git
+        # https://github.com/swoole/swoole-src
         && cd /tmp \
         && wget https://pecl.php.net/get/${EXT_NAME}-${EXT_VERSION}.tgz \
         && tar -zxvf ${EXT_NAME}-${EXT_VERSION}.tgz \
-        && cd php-xhprof-extension-master \
+        && cd ${EXT_NAME}-${EXT_VERSION} \
         && phpize \
         && ./configure \
              --with-php-config=php-config \
