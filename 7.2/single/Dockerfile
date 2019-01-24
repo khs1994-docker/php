@@ -24,6 +24,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
     && for extension in $PHP_EXTENSION;do \
          docker-php-ext-install $extension \
          && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "${extension} install error" \
+         && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
          && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
        done \
     && apk del --no-cache .build-deps
@@ -76,6 +77,7 @@ RUN export EXT_NAME=gd \
     && docker-php-ext-install $EXT_NAME \
     && docker-php-ext-enable $EXT_NAME \
     && strip --strip-all $(php-config --extension-dir)/$(echo ${EXT_NAME} | cut -d '-' -f 1).so \
+    && rm -rf /usr/local/include/php/ext/$(echo ${EXT_NAME} | cut -d '-' -f 1) \
     && apk del --no-cache .build-deps
 
 RUN export EXT_NAME=pdo_mysql \
@@ -91,6 +93,7 @@ RUN export EXT_NAME=mysqli \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && docker-php-ext-install $EXT_NAME \
     && docker-php-ext-enable $EXT_NAME \
+    && rm -rf /usr/local/include/php/ext/$(echo ${EXT_NAME} | cut -d '-' -f 1) \
     && strip --strip-all $(php-config --extension-dir)/$(echo ${EXT_NAME} | cut -d '-' -f 1).so \
     && apk del --no-cache .build-deps
 
@@ -231,10 +234,12 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
          && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error" \
          && rm -rf /usr/local/lib/php/doc/$(echo ${extension} | cut -d '-' -f 1) \
          && rm -rf /usr/local/lib/php/test/$(echo ${extension} | cut -d '-' -f 1) \
+         && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
          && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
       done \
     && apk del --no-cache .build-deps \
-    && rm -rf /tmp/pear
+    && rm -rf /tmp/pear \
+    && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 RUN export EXT_NAME=memcached \
     && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
@@ -250,7 +255,9 @@ RUN export EXT_NAME=memcached \
     && apk del --no-cache .build-deps \
     && rm -rf /tmp/pear \
     && rm -rf /usr/local/lib/php/doc/$EXT_NAME \
-    && rm -rf /usr/local/lib/php/test/$EXT_NAME
+    && rm -rf /usr/local/lib/php/test/$EXT_NAME \
+    && rm -rf /usr/local/include/php/ext/$EXT_NAME \
+    && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 RUN export EXT_NAME=yaml \
     && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
@@ -262,7 +269,9 @@ RUN export EXT_NAME=yaml \
     && apk del --no-cache .build-deps \
     && rm -rf /tmp/pear \
     && rm -rf /usr/local/lib/php/doc/$EXT_NAME \
-    && rm -rf /usr/local/lib/php/test/$EXT_NAME
+    && rm -rf /usr/local/lib/php/test/$EXT_NAME \
+    && rm -rf /usr/local/include/php/ext/$EXT_NAME \
+    && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 RUN export EXT_NAME=xdebug \
     && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
@@ -273,6 +282,8 @@ RUN export EXT_NAME=xdebug \
     && apk del --no-cache .build-deps \
     && rm -rf /tmp/pear \
     && rm -rf /usr/local/lib/php/doc/$EXT_NAME \
+    && rm -rf /usr/local/include/php/ext/$EXT_NAME \
+    && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
          /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default
 

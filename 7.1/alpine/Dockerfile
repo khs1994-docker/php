@@ -144,6 +144,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default \
         && rm -rf /tmp/* \
+        && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         # 创建日志文件夹
         && mkdir -p /var/log/php-fpm \
         && ln -sf /dev/stdout /var/log/php-fpm/access.log \

@@ -128,7 +128,8 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
              && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
            done \
         && apk del --no-cache .build-deps .php-swoole-build-deps \
-        && rm -rf /tmp/*
+        && rm -rf /tmp/* \
+        && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 WORKDIR /app
 

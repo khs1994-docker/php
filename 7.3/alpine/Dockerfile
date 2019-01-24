@@ -162,6 +162,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
         && ln -sf /dev/stderr /var/log/php-fpm/error.log \
         && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
         && chmod -R 777 /var/log/php-fpm \
-        && rm -rf /usr/local/sbin/docker-php-*
+        && rm -rf /usr/local/sbin/docker-php-* \
+        && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 WORKDIR /app

@@ -438,7 +438,8 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
       ; apk del --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
 # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
-      && rm -rf /tmp/*
+      && rm -rf /tmp/* \
+      && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 EXPOSE 9000
 CMD ["php-fpm"]

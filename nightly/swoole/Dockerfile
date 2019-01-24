@@ -371,7 +371,8 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
          done \
          \
       ; apk del --no-cache .pecl_build_deps \
-      && rm -rf /tmp/*
+      && rm -rf /tmp/* \
+      && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 WORKDIR /app
 

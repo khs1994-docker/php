@@ -140,6 +140,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && docker-php-ext-enable opcache tideways_xhprof \
         && apk del --no-cache .build-deps .php-fpm-build-deps \
         && rm -rf /tmp/* \
+        && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         # 默认不启用 xdebug
         && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \

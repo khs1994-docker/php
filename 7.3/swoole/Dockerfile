@@ -138,6 +138,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
            done \
         && apk del --no-cache .build-deps .php-swoole-build-deps \
         && rm -rf /tmp/* \
+        && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         && rm -rf /usr/local/sbin
 
 WORKDIR /app
