@@ -337,7 +337,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
 ENV PECL_BUILD_DEPS \
       libmemcached-dev \
       yaml-dev \
-      linux-headers \
+      # linux-headers \
       zlib-dev
 
 ENV PECL_RUN_DEPS \

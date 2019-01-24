@@ -111,8 +111,8 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-pic \
         --with-enchant=shared \
         --enable-fileinfo=shared \
-         --with-ldap=shared \
-             --with-ldap-sasl \
+        --with-ldap=shared \
+            --with-ldap-sasl \
         --enable-phar \
         --enable-posix=shared \
         --with-pspell=shared \

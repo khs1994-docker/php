@@ -128,7 +128,9 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                                         --with-webp-dir=/usr \
                                         --with-xpm-dir=/usr \
         && docker-php-ext-install $PHP_EXTENSION \
-        && apk add --virtual .build-deps linux-headers $PHPIZE_DEPS \
+        && apk add --virtual .build-deps \
+                                # linux-headers \
+                                $PHPIZE_DEPS \
         && for extension in ${PHP_EXTENSION};do \
              strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
            done \

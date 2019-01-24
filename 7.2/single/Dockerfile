@@ -324,7 +324,7 @@ RUN export EXT_NAME=swoole \
              --enable-sockets \
              --enable-http2 \
              --enable-mysqlnd \
-             --enable-async-redis \
+             # --enable-async-redis \
         && make \
         && make install \
         && docker-php-ext-enable ${EXT_NAME} \

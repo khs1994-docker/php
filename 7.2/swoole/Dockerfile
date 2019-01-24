@@ -119,7 +119,9 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                         --with-webp-dir=/usr \
                                         --with-xpm-dir=/usr \
         && docker-php-ext-install $PHP_EXTENSION \
-        && apk add --no-cache --virtual .build-deps linux-headers $PHPIZE_DEPS \
+        && apk add --no-cache --virtual .build-deps \
+                                          # linux-headers \
+                                          $PHPIZE_DEPS \
         && for extension in ${PHP_EXTENSION};do \
              strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
            done \
