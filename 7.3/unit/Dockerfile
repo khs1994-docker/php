@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                  tar \
                  xz \
 # https://github.com/docker-library/php/issues/494
-                 libressl \
+                 openssl \
                  # git \
 # 以下两个均为版本控制系统
 # subversion \
@@ -166,7 +166,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
           coreutils \
           curl-dev \
           libedit-dev \
-          libressl-dev \
+          openssl-dev \
           libsodium-dev \
           libxml2-dev \
           sqlite-dev \
@@ -302,7 +302,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
   && tar -zxvf ${NGINX_UNIT_VERSION}.tar.gz \
   && mv unit-${NGINX_UNIT_VERSION} unit \
   && cd /usr/src/unit \
-  && apk add --virtual .build-deps $PHPIZE_DEPS libressl-dev \
+  && apk add --virtual .build-deps $PHPIZE_DEPS openssl-dev \
   && ./configure --prefix=/usr/local/nginx-unit --openssl \
   && ./configure php \
        --module=php72 \

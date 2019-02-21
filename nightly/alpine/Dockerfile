@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                  tar \
                  xz \
 # https://github.com/docker-library/php/issues/494
-                 libressl \
+                 openssl \
                  git \
 # 以下两个均为版本控制系统
 # subversion \
@@ -208,7 +208,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
           coreutils \
           curl-dev \
           libedit-dev \
-          libressl-dev \
+          openssl-dev \
           libsodium-dev \
           libxml2-dev \
           sqlite-dev \
@@ -239,6 +239,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
           tidyhtml-dev \
           net-snmp-dev \
           openldap-dev \
+          oniguruma-dev \
           ${APK_DEV_EXTRA:-} \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \

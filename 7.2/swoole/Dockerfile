@@ -81,7 +81,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          # tidyhtml-libs \
       # *-dev 编译之后删除
       && PHP_SWOOLE_BUILD_DEPS=" \
-                         libressl-dev \
+                         openssl-dev \
                          libmemcached-dev \
                          cyrus-sasl-dev \
                          postgresql-dev \

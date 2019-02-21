@@ -90,7 +90,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                          # tidyhtml-libs \
       # *-dev 编译之后删除
       && PHP_FPM_BUILD_DEPS=" \
-                         libressl-dev \
+                         openssl-dev \
                          libmemcached-dev \
                          cyrus-sasl-dev \
                          postgresql-dev \
