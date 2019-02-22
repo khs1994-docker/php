@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
                  tar \
                  xz \
 # https://github.com/docker-library/php/issues/494
-                 lopenssl \
+                 openssl \
                  # git \
 # 以下两个均为版本控制系统
 # subversion \
@@ -237,6 +237,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
 		\
 		$PHP_EXTRA_CONFIGURE_ARGS \
 	&& make -j "$(nproc)" \
+  && find -type f -name '*.a' -delete \
 	&& make install \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
 # && docker-php-source delete \
