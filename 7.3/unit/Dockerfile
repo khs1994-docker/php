@@ -153,7 +153,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
   --mount=type=bind,from=php:7.3.2-alpine,source=/usr/local/bin,target=/opt/bin,rw \
   set -xe \
   \
-  && export PATH=/opt/bin:$PATH \
+  && export PATH=$PATH:/opt/bin \
   && cd /opt/bin \
   && for file in `ls docker-php-*`; \
    do \
@@ -342,7 +342,7 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
     --mount=type=bind,from=php:7.3.2-alpine,source=/usr/local/bin,target=/opt/bin,rw \
       set -x \
       \
-      && export PATH=/opt/bin:$PATH \
+      && export PATH=$PATH:/opt/bin \
       && cd /opt/bin \
       && for file in `ls docker-php-*`; \
         do \
