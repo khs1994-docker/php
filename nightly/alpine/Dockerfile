@@ -427,11 +427,17 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
         https://github.com/khs1994-php/pickle/releases/download/v0.4.0-2019-02-14/pickle.phar \
       && chmod +x /usr/local/bin/pickle \
       && for extension in $PECL_EXTENSION;do \
-           pickle install $extension -n --defaults || true \
-           && rm -rf /tmp/$(echo ${extension} | cut -d '-' -f 1) \
-           && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error" \
-           && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
-           && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so || true ; \
+           EXT_REAL_NAME=$(echo ${extension} | cut -d '-' -f 1) \
+           && pickle install $extension -n --defaults \
+           || cd /tmp/${EXT_REAL_NAME}/${EXT_REAL_NAME}* \
+           && phpize \
+           && ./configure \
+           && make \
+           && make install \
+           && rm -rf /tmp/${EXT_REAL_NAME} \
+           && docker-php-ext-enable ${EXT_REAL_NAME} || echo "pecl ${extension} install error" \
+           && rm -rf /usr/local/include/php/ext/${EXT_REAL_NAME} \
+           && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
          done \
          \
       # && apk add git openssh-client \
