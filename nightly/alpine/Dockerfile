@@ -67,7 +67,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         # --without-pear \
         --disable-phpdbg \
         # https://github.com/docker-library/php/issues/510
-        --enable-embed=shared \
+        # --enable-embed=shared \
         --enable-fpm \
         --with-fpm-user=www-data \
         --with-fpm-group=www-data \
@@ -339,11 +339,11 @@ RUN --mount=type=cache,target=/var/cache/apk,id=php_apk_cache \
 #  && pecl update-channels \
 #	&& rm -rf /tmp/pear ~/.pearrc \
 # tar /usr/local/lib/libphp8.so
-  && cd /usr/local/lib \
-  && strip --strip-all libphp8.so \
-  && tar -zcvf libphp8.so.tar.gz libphp8.so \
-  && rm -rf libphp8.so \
-  && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
+#  && cd /usr/local/lib \
+#  && strip --strip-all libphp8.so \
+#  && tar -zcvf libphp8.so.tar.gz libphp8.so \
+#  && rm -rf libphp8.so \
+#  && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del .build-deps \
   \
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
