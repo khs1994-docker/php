@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:experimental
 ARG PHP_VERSION=7.4TEST
+ARG IMAGE=khs1994/php
 
-FROM khs1994/php:${PHP_VERSION}-fpm-alpine
+FROM ${IMAGE}:${PHP_VERSION}-fpm-alpine as php
 
 # install composer
 
