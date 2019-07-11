@@ -149,6 +149,7 @@ ENV NGINX_UNIT_VERSION 1.9.0
 RUN --mount=type=bind,from=php:7.2.20-alpine,source=/usr/src,target=/usr/local/src,rw \
   --mount=type=bind,from=php:7.2.20-alpine,source=/usr/local/bin,target=/opt/bin,rw \
   set -xe \
+  && mkdir -p /usr/src \
   && cp /usr/local/src/* /usr/src/ \
   && export PATH=$PATH:/opt/bin \
   ; mkdir -p $PHP_INI_DIR/conf.d \
