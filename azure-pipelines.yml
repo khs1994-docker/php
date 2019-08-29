@@ -161,7 +161,7 @@ jobs:
   - script: |
       cp .env.example .env
       source tag.sh
-      set -x
+      set -ex
 
       if [ ! `echo $BUILD_SOURCEBRANCH | grep 'refs/tags/'` ];then \
         export PLATFORM=linux/amd64; \
@@ -191,5 +191,5 @@ jobs:
       curl -X POST https://hooks.microbadger.com/images/$DOCKER_HUB_USERNAME/php/OMVCEKSr9I0cjhU0DQop3HwjYAc=
     env:
       DOCKER_HUB_USERNAME: khs1994
-    displayName: 'Push alias'
+    displayName: 'Trigger hooks'
     condition: succeeded()
