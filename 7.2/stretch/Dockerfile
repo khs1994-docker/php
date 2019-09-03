@@ -2,11 +2,16 @@
 
 # https://sources.debian.org/src/php7.2/7.2.4-1/debian/control/
 
-ARG PHP_VERSION=7.2.21
+ARG PHP_VERSION=7.2.22
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-fpm-stretch
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
+
+ARG VCS_REF
+
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/khs1994-docker/php"
 
 ENV TZ=Asia/Shanghai
 
@@ -178,13 +183,13 @@ RUN --mount=type=bind,from=arm32v7/composer:1.9.0,source=/usr/bin/composer,targe
  #           exit(1); \
  #       }" \
  # && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
- && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.8/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
+ && curl -fsSL https://raw.githubusercontent.com/composer/docker/master/1.9/docker-entrypoint.sh > /docker-entrypoint.composer.sh \
  && chmod +x /docker-entrypoint.composer.sh \
  && cp -a /opt/bin/composer /usr/bin/composer \
  && composer --ansi --version --no-interaction \
  \
  # composer 中国镜像
- && composer config -g repo.packagist composer https://php.cnpkg.org \
+ && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
  \
  # laravel 安装程序
  && composer global require --prefer-dist "laravel/installer" \

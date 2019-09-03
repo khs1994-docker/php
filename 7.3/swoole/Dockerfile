@@ -1,9 +1,14 @@
 # syntax=docker/dockerfile:experimental
-ARG PHP_VERSION=7.3.8
+ARG PHP_VERSION=7.3.9
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-cli-alpine as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
+
+ARG VCS_REF
+
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/khs1994-docker/php"
 
 ARG PHP_EXTENSION_EXTRA
 
