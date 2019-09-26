@@ -15,13 +15,13 @@ ENV TZ=Asia/Shanghai \
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
-ARG PHP_EXTENSION_EXTRA
+ARG PHP_EXTENSION_EXTRA="ffi"
 
 ARG PECL_EXTENSION_EXTRA
 
-ARG APK_EXTRA
+ARG APK_EXTRA="libgcrypt oniguruma"
 
-ARG APK_DEV_EXTRA
+ARG APK_DEV_EXTRA="libgpg-error-dev libgcrypt-dev oniguruma-dev"
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -70,19 +70,16 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --enable-embed=shared \
         # --disable-cgi \
         --with-gettext=shared \
-        --with-gd=shared \
-            --with-freetype-dir=/usr \
+        --enable-gd=shared \
+            --with-freetype \
             --disable-gd-jis-conv \
-            --with-jpeg-dir=/usr \
-            --with-png-dir=/usr \
-            --with-webp-dir=/usr \
-            --with-xpm-dir=/usr \
-        --with-pcre-regex \
+            --with-jpeg \
+            --with-webp \
+            --with-xpm \
         --with-pdo-mysql=shared \
         --with-pdo-pgsql=shared \
         --with-xsl=shared \
         --enable-bcmath=shared \
-        --enable-libxml \
         --enable-inline-optimization \
         --enable-mbregex \
         --enable-pcntl=shared \
@@ -93,18 +90,16 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --enable-sysvsem=shared \
         --enable-sysvshm=shared \
         --enable-xml \
-        --enable-zip \
-            --with-libzip \
+        --with-zip \
         --enable-calendar=shared \
         --enable-intl=shared \
         --enable-exif=shared \
         --with-bz2=shared \
         --with-tidy=shared \
         --with-gmp=shared \
+        --with-kerberos \
         --with-imap=shared \
-            --with-kerberos \
             --with-imap-ssl \
-        --with-icu-dir=/usr \
         --with-xmlrpc=shared \
         --with-pic \
         --with-enchant=shared \
@@ -298,12 +293,12 @@ ENV PECL_RUN_DEPS \
       zlib
 
 ENV PECL_EXTENSION \
-      mongodb \
-      igbinary \
-      redis \
-      memcached \
-      xdebug \
-      yaml \
+      mongodb-beta \
+      igbinary-beta \
+      redis-beta \
+      memcached-beta \
+      xdebug-beta \
+      yaml-beta \
       ${PECL_EXTENSION_EXTRA:-}
 
 RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt/bin,rw \
@@ -320,7 +315,21 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt
            && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
            && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
          done \
-      ; apk del --no-network --no-cache .pecl_build_deps \
+# https://github.com/tideways/php-xhprof-extension.git
+      && test `uname -m` = 'x86_64' \
+      && (cd /tmp \
+      && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+             | tar -zxvf - \
+      && cd php-xhprof-extension-master \
+      && phpize \
+      && ./configure \
+      && make \
+      && make install \
+      && docker-php-ext-enable tideways_xhprof \
+      && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
+          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
+      || true \
+      && apk del --no-network --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
            /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
