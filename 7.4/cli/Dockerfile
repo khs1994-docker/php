@@ -272,9 +272,6 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/src,target=/usr/local
   && strip --strip-all /usr/local/lib/libphp7.so \
   && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del --no-network --no-cache .build-deps \
-# https://github.com/docker-library/php/issues/443
-  && pecl update-channels \
-	&& rm -rf /tmp/pear ~/.pearrc \
   \
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 # RUN docker-php-ext-enable sodium
@@ -308,14 +305,23 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt
       && export PATH=$PATH:/opt/bin \
       && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
       && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
+      && curl -sfL -o /usr/local/bin/pickle \
+        https://github.com/khs1994-php/pickle/releases/download/v0.4.0-2019-02-14/pickle.phar \
+      && chmod +x /usr/local/bin/pickle \
       && for extension in $PECL_EXTENSION;do \
-           pecl install $extension \
-           && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error" \
-           && rm -rf /usr/local/lib/php/doc/$(echo ${extension} | cut -d '-' -f 1) \
-           && rm -rf /usr/local/lib/php/test/$(echo ${extension} | cut -d '-' -f 1) \
-           && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
-           && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
+           EXT_REAL_NAME=$(echo ${extension} | cut -d '-' -f 1) \
+           && pickle install $extension -n --defaults \
+           || (cd /tmp/${EXT_REAL_NAME}/${EXT_REAL_NAME}* \
+           && phpize \
+           && ./configure \
+           && make \
+           && make install \
+           && rm -rf /tmp/${EXT_REAL_NAME}) \
+           && docker-php-ext-enable ${EXT_REAL_NAME} || echo "pecl ${extension} install error" \
+           && rm -rf /usr/local/include/php/ext/${EXT_REAL_NAME} \
+           && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
          done \
+         \
 # https://github.com/tideways/php-xhprof-extension.git
       && test `uname -m` = 'x86_64' \
       && (cd /tmp \
@@ -334,8 +340,7 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
            /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
-      && rm -rf /tmp/* \
-      && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
+      && rm -rf /tmp/*
 
 WORKDIR /app
 
