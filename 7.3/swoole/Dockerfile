@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:experimental
 ARG PHP_VERSION=7.3.9
 
-FROM --platform=$TARGETPLATFORM khs1994/php:${PHP_VERSION}-cli-alpine as php
+FROM --platform=$TARGETPLATFORM khs1994/php:${PHP_VERSION}-cli-alpine
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -25,6 +25,7 @@ ENV PECL_EXTENSION \
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
 RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+        && apk add --no-cache --virtual .pecl_build_deps $PHPIZE_DEPS \
         && for extension in $PECL_EXTENSION;do \
              pecl install $extension \
              && docker-php-ext-enable $(echo ${extension} | cut -d '-' -f 1) || echo "pecl ${extension} install error" \
@@ -34,7 +35,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
              && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
            done \
         && docker-php-ext-enable opcache \
-        && apk del --no-network --no-cache .build-deps .php-swoole-build-deps \
+        && apk del --no-network --no-cache .pecl_build_deps \
         && rm -rf /tmp/* \
         && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         && rm -rf /usr/local/sbin

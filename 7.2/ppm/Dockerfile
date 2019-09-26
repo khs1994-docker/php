@@ -18,4 +18,4 @@ RUN --mount=type=cache,from=composer,source=/ppm,target=/tmp/ppm \
       https://raw.githubusercontent.com/php-pm/php-pm-docker/master/build/run-ppm.sh \
       && chmod +x /usr/local/bin/docker-entrypoint
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+ENTRYPOINT ["docker-entrypoint"]

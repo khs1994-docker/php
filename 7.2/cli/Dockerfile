@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM --platform=$TARGETPLATFORM alpine:3.10 as php
+FROM --platform=$TARGETPLATFORM alpine:3.10
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -74,7 +74,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         # --with-fpm-group=www-data \
         # https://github.com/docker-library/php/issues/510
         --enable-embed=shared \
-        --disable-cgi \
+        # --disable-cgi \
         --with-gettext=shared \
         --with-gd=shared \
             --with-freetype-dir=/usr \
@@ -309,7 +309,7 @@ ENV PECL_EXTENSION \
       igbinary \
       redis \
       memcached \
-      # xdebug \
+      xdebug \
       yaml \
       ${PECL_EXTENSION_EXTRA:-}
 
@@ -328,8 +328,8 @@ RUN --mount=type=bind,from=php:7.2.22-alpine,source=/usr/local/bin,target=/opt/b
          done \
       ; apk del --no-network --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
-      # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-      #      /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+      && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+           /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
       && rm -rf /tmp/* \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 

@@ -302,7 +302,7 @@ ENV PECL_EXTENSION \
       igbinary \
       redis \
       memcached \
-      # xdebug \
+      xdebug \
       yaml \
       ${PECL_EXTENSION_EXTRA:-}
 
@@ -322,8 +322,8 @@ RUN --mount=type=bind,from=php:7.3.9-alpine,source=/usr/local/bin,target=/opt/bi
          done \
       ; apk del --no-network --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
-      # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-      #      /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+      && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+           /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
       && rm -rf /tmp/* \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
