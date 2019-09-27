@@ -328,7 +328,7 @@ RUN --mount=type=bind,from=php:7.3.9-alpine,source=/usr/local/bin,target=/opt/bi
       && cd php-xhprof-extension-master \
       && phpize \
       && ./configure \
-      && make \
+      && make -j "$(nproc)" \
       && make install \
       && docker-php-ext-enable tideways_xhprof \
       && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
