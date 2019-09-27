@@ -47,7 +47,7 @@ RUN --mount=type=bind,from=php:7.2.22-alpine,source=/usr/local/bin,target=/opt/b
       && rm -rf /usr/local/lib/php/doc/${extension_name} \
       && rm -rf /usr/local/lib/php/test/${extension_name} \
       && rm -rf /usr/local/include/php/ext/${extension_name} \
-      && strip --strip-all $(php-config --extension-dir)/${extension_name}.so ; \
+      && strip --strip-all $(php-config --extension-dir)/${extension_name}.so \
       && apk del --no-network --no-cache .pecl_build_deps \
       && rm -rf /tmp/* \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
