@@ -340,10 +340,10 @@ RUN --mount=type=bind,from=php:7.2.22-alpine,source=/usr/local/bin,target=/opt/b
       && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
       || true \
-      && apk del --no-network --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
            /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+      && apk del --no-network --no-cache .pecl_build_deps \
       && rm -rf /tmp/* \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 

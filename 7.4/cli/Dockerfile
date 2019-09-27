@@ -316,7 +316,7 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt
            && ./configure \
            && make -j "$(nproc)" \
            && make install \
-           && rm -rf /tmp/${EXT_REAL_NAME}*) \
+           && rm -rf /tmp/${EXT_REAL_NAME}* \
            && docker-php-ext-enable ${EXT_REAL_NAME}) || echo "pecl ${extension} install error" \
            && rm -rf /usr/local/include/php/ext/${EXT_REAL_NAME} \
            && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
@@ -336,10 +336,10 @@ RUN --mount=type=bind,from=php:7.4.0RC1-alpine,source=/usr/local/bin,target=/opt
       && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
       || true \
-      && apk del --no-network --no-cache .pecl_build_deps \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
            /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
+      && apk del --no-network --no-cache .pecl_build_deps \
       && rm -rf /tmp/*
 
 WORKDIR /app

@@ -364,7 +364,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
            && ./configure \
            && make -j "$(nproc)" \
            && make install \
-           && rm -rf /tmp/${EXT_REAL_NAME}*) \
+           && rm -rf /tmp/${EXT_REAL_NAME}* \
            && docker-php-ext-enable ${EXT_REAL_NAME}) || echo "pecl ${extension} install error" \
            && rm -rf /usr/local/include/php/ext/${EXT_REAL_NAME} \
            && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
@@ -384,8 +384,9 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
              /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default) \
+      || true \
 # https://github.com/tideways/php-xhprof-extension.git
-      ; test `uname -m` = 'x86_64' \
+      && test `uname -m` = 'x86_64' \
       && (cd /tmp \
       && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
            | tar -zxvf - \
@@ -398,10 +399,8 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
       && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
           /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
       || true \
-      ; apk del --no-network --no-cache .pecl_build_deps \
-      ; mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
-           /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default \
-      ; rm -rf /tmp/* \
+      && apk del --no-network --no-cache .pecl_build_deps \
+      && rm -rf /tmp/* \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/*
 
 ENTRYPOINT ["docker-php-entrypoint"]
