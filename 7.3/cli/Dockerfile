@@ -323,19 +323,13 @@ RUN --mount=type=bind,from=php:7.3.11-alpine,source=/usr/local/bin,target=/opt/b
            && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
            && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
          done \
+      && curl -fsSL -o /usr/local/bin/pickle \
+           https://github.com/khs1994-php/pickle/releases/download/v0.4.1-2019-11-08/pickle.phar \
+      && chmod +x /usr/local/bin/pickle \
 # https://github.com/tideways/php-xhprof-extension.git
-      && test `uname -m` = 'x86_64' \
-      && (cd /tmp \
-      && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-             | tar -zxvf - \
-      && cd php-xhprof-extension-master \
-      && phpize \
-      && ./configure \
-      && make -j "$(nproc)" \
-      && make install \
-      && docker-php-ext-enable tideways_xhprof \
-      && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
-          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
+      && pickle install \
+         https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+         -n --defaults --no-write \
       || true \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

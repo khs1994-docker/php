@@ -138,8 +138,8 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 # ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
 
-ENV PHP_VERSION 7.4.0RC4
-# ENV PHP_URL="https://www.php.net/get/php-7.4.0RC4.tar.xz/from/this/mirror" PHP_ASC_URL="https://www.php.net/get/php-7.4.0RC4.tar.xz.asc/from/this/mirror"
+ENV PHP_VERSION 7.4.0RC5
+# ENV PHP_URL="https://www.php.net/get/php-7.4.0RC5.tar.xz/from/this/mirror" PHP_ASC_URL="https://www.php.net/get/php-7.4.0RC5.tar.xz.asc/from/this/mirror"
 # ENV PHP_SHA256="da1a705c0bc46410e330fc6baa967666c8cd2985378fb9707c01a8e33b01d985" PHP_MD5=""
 
 # COPY --from=php:alpine /usr/local/bin/docker-php-* /usr/local/bin/
@@ -150,8 +150,8 @@ ENV PHP_VERSION 7.4.0RC4
 # COPY --from=php:alpine /usr/local/bin/docker-php-ext-enable /usr/local/bin/
 # COPY --from=php:alpine /usr/local/bin/docker-php-ext-install /usr/local/bin/
 
-RUN --mount=type=bind,from=php:7.4.0RC4-alpine,source=/usr/src,target=/usr/local/src,rw \
-    --mount=type=bind,from=php:7.4.0RC4-alpine,source=/usr/local/bin,target=/opt/bin,rw \
+RUN --mount=type=bind,from=php:7.4.0RC5-alpine,source=/usr/src,target=/usr/local/src,rw \
+    --mount=type=bind,from=php:7.4.0RC5-alpine,source=/usr/local/bin,target=/opt/bin,rw \
   set -xe \
   && mkdir -p /usr/src \
   && cp /usr/local/src/* /usr/src/ \
@@ -309,7 +309,7 @@ ENV PECL_EXTENSION \
       yaml-beta \
       ${PECL_EXTENSION_EXTRA:-}
 
-RUN --mount=type=bind,from=php:7.4.0RC4-alpine,source=/usr/local/bin,target=/opt/bin,rw \
+RUN --mount=type=bind,from=php:7.4.0RC5-alpine,source=/usr/local/bin,target=/opt/bin,rw \
       set -x \
       && cp -a /opt/bin/docker-php-entrypoint /usr/local/bin \
       && export PATH=$PATH:/opt/bin \
@@ -333,20 +333,13 @@ RUN --mount=type=bind,from=php:7.4.0RC4-alpine,source=/usr/local/bin,target=/opt
            && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
          done \
          \
+      && curl -fsSL -o /usr/local/bin/pickle \
+           https://github.com/khs1994-php/pickle/releases/download/v0.4.1-2019-11-08/pickle.phar \
+      && chmod +x /usr/local/bin/pickle \
 # https://github.com/tideways/php-xhprof-extension.git
-      && test `uname -m` = 'x86_64' \
-      && (cd /tmp \
-      && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-             | tar -zxvf - \
-      && cd php-xhprof-extension-master \
-      && phpize \
-      && ./configure --help || true \
-      && ./configure \
-      && make -j "$(nproc)" \
-      && make install \
-      && docker-php-ext-enable tideways_xhprof \
-      && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
-          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
+      && pickle install \
+         https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+         -n --defaults --no-write \
       || true \
 # 默认不启用 xdebug
       && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

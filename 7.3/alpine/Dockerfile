@@ -137,19 +137,13 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
              && rm -rf /usr/local/include/php/ext/$(echo ${extension} | cut -d '-' -f 1) \
              && strip --strip-all $(php-config --extension-dir)/$(echo ${extension} | cut -d '-' -f 1).so ; \
            done \
+        && curl -fsSL -o /usr/local/bin/pickle \
+           https://github.com/khs1994-php/pickle/releases/download/v0.4.1-2019-11-08/pickle.phar \
+        && chmod +x /usr/local/bin/pickle \
 # https://github.com/tideways/php-xhprof-extension.git
-        && test `uname -m` = 'x86_64' \
-        && (cd /tmp \
-        && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-             | tar -zxvf - \
-        && cd php-xhprof-extension-master \
-        && phpize \
-        && ./configure \
-        && make -j "$(nproc)" \
-        && make install \
-        && docker-php-ext-enable tideways_xhprof \
-        && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
-          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
+        && pickle install \
+           https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+           -n --defaults --no-write \
         || true \
         && docker-php-ext-enable opcache \
         && apk del --no-network --no-cache .build-deps .php-fpm-build-deps \

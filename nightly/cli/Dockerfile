@@ -331,7 +331,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
 # RUN set -ex \
   && rm -rf /usr/src/php \
   && curl -fsSL -o /usr/local/bin/pickle \
-       https://github.com/khs1994-php/pickle/releases/download/v0.4.1-2019-10-07/pickle.phar \
+       https://github.com/khs1994-php/pickle/releases/download/v0.4.1-2019-11-08/pickle.phar \
   && chmod +x /usr/local/bin/pickle
 
 ENV PECL_BUILD_DEPS \
@@ -377,36 +377,14 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
            && strip --strip-all $(php-config --extension-dir)/${EXT_REAL_NAME}.so || true ; \
          done \
          \
-      && (cd /tmp \
-      && curl -fsSL https://github.com/xdebug/xdebug/archive/master.tar.gz \
-           | tar -zxvf - \
-      && cd xdebug-master \
-      && phpize \
-      && ./configure --help || true \
-      && ./configure --enable-xdebug-dev \
-      && make all -j "$(nproc)" \
-      && make install \
-      && cd - \
-      && rm -rf xdebug* \
-      && docker-php-ext-enable xdebug \
-# 默认不启用 xdebug
-      && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-             /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default) \
+      && pickle install \
+           https://github.com/xdebug/xdebug/archive/master.tar.gz \
+           -n --defaults --no-write \
       || true \
 # https://github.com/tideways/php-xhprof-extension.git
-      && test `uname -m` = 'x86_64' \
-      && (cd /tmp \
-      && curl -fsSL https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-           | tar -zxvf - \
-      && cd php-xhprof-extension-master \
-      && phpize \
-      && ./configure --help || true \
-      && ./configure \
-      && make -j "$(nproc)" \
-      && make install \
-      && docker-php-ext-enable tideways_xhprof \
-      && mv /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini \
-          /usr/local/etc/php/conf.d/docker-php-ext-tideways_xhprof.ini.default) \
+      && pickle install \
+           https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+           -n --defaults --no-write \
       || true \
       && apk del --no-network --no-cache .pecl_build_deps \
       && rm -rf /tmp/* \
