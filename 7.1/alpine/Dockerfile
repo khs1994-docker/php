@@ -118,7 +118,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                           # linux-headers \
                                           $PHPIZE_DEPS \
         && curl -fsSL -o /usr/local/bin/pickle \
-           https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
+           https://github.com/khs1994-php/pickle/releases/download/v19.11.11/pickle.phar \
         && chmod +x /usr/local/bin/pickle \
 # 安装内置扩展
         && docker-php-source extract \

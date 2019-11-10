@@ -317,7 +317,7 @@ RUN --mount=type=bind,from=php:7.4.0RC5-alpine,source=/usr/local/bin,target=/opt
       && apk add --no-cache --virtual .pecl_build_deps $PECL_BUILD_DEPS $PHPIZE_DEPS \
       && apk add --no-cache --virtual .pecl_run_deps $PECL_RUN_DEPS \
       && curl -fsSL -o /usr/local/bin/pickle \
-           https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
+           https://github.com/khs1994-php/pickle/releases/download/v19.11.11/pickle.phar \
       && chmod +x /usr/local/bin/pickle \
       && pickle install $PECL_EXTENSION -n --defaults --strip --cleanup --continue-on-error \
       && pickle install \
