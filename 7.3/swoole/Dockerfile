@@ -32,7 +32,7 @@ RUN --mount=type=bind,from=php:7.3.11-alpine,source=/usr/local/bin,target=/opt/b
                                       $PHPIZE_DEPS \
                                       openssl-dev \
       && export PATH=$PATH:/opt/bin \
-      && echo" \
+      && echo " \
            --enable-sockets \
            --enable-openssl \
            --enable-http2 \

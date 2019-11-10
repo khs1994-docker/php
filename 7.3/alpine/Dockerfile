@@ -122,7 +122,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
 # 安装内置扩展
         && docker-php-ext-configure zip \
                                     --with-libzip \
-        && docker-php-ext-install zlib zip \
+        && docker-php-ext-install zip \
         # && docker-php-ext-configure gd \
         && echo " \
                                         --disable-gd-jis-conv \
