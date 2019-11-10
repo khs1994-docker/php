@@ -120,7 +120,9 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && curl -fsSL -o /usr/local/bin/pickle \
            https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
         && chmod +x /usr/local/bin/pickle \
+# 安装内置扩展
         && docker-php-source extract \
+        && docker-php-ext-install zlib zip \
         # && docker-php-ext-configure gd \
         && echo " \
                                     --disable-gd-jis-conv \
@@ -129,7 +131,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                     --with-png-dir=/usr \
                                     --with-webp-dir=/usr \
                                     --with-xpm-dir=/usr" > /tmp/gd.configure.options \
-# 安装内置扩展
         && pickle install $PHP_EXTENSION -n --defaults \
            --strip \
         && docker-php-source delete \

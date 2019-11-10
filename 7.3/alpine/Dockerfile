@@ -116,9 +116,13 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && apk add --no-cache --virtual .php-fpm-run-deps $PHP_FPM_RUN_DEPS \
         && apk add --no-cache --virtual .php-fpm-build-deps $PHP_FPM_BUILD_DEPS \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
-        # && docker-php-ext-configure zip \
-        && echo " \
-                                    --with-libzip" > /tmp/zip.configure.options \
+        && curl -fsSL -o /usr/local/bin/pickle \
+           https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
+        && chmod +x /usr/local/bin/pickle \
+# 安装内置扩展
+        && docker-php-ext-configure zip \
+                                    --with-libzip \
+        && docker-php-ext-install zlib zip \
         # && docker-php-ext-configure gd \
         && echo " \
                                         --disable-gd-jis-conv \
@@ -128,10 +132,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                         --with-webp-dir=/usr \
                                         --with-xpm-dir=/usr" > /tmp/gd.configure.options \
         # && docker-php-ext-install $PHP_EXTENSION \
-        && curl -fsSL -o /usr/local/bin/pickle \
-           https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
-        && chmod +x /usr/local/bin/pickle \
-# 安装内置扩展
         && docker-php-source extract \
         && pickle install $PHP_EXTENSION -n --defaults --strip \
         && docker-php-source delete \
@@ -145,12 +145,10 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
              https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
              -n --defaults --strip --cleanup --no-write \
         || true \
-        && docker-php-ext-enable opcache \
+        && pickle install opcache \
+        # && docker-php-ext-enable opcache \
         && apk del --no-network --no-cache .phpize-deps .php-fpm-build-deps \
         && rm -rf /tmp/* \
-# 默认不启用 xdebug
-        && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-          /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.default \
 # 创建日志文件夹
         && mkdir -p /var/log/php-fpm \
         && ln -sf /dev/stdout /var/log/php-fpm/access.log \
