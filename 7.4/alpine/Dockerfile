@@ -120,10 +120,10 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && apk add --no-cache --virtual .php-fpm-build-deps $PHP_FPM_BUILD_DEPS \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
         # && docker-php-ext-configure zip \
-        echo " \
+        && echo " \
                                     --with-libzip" > /tmp/zip.configure.options \
         # && docker-php-ext-configure gd \
-        echo " \
+        && echo " \
                                         --disable-gd-jis-conv \
                                         --with-freetype-dir=/usr \
                                         --with-jpeg-dir=/usr \
@@ -134,10 +134,9 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && curl -fsSL -o /usr/local/bin/pickle \
            https://github.com/khs1994-php/pickle/releases/download/v19.11.10/pickle.phar \
         && chmod +x /usr/local/bin/pickle \
-        && docker-php-source extract \
 # 安装内置扩展
-        && pickle install $PHP_EXTENSION -n --defaults \
-           --strip \
+        && docker-php-source extract \
+        && pickle install $PHP_EXTENSION -n --defaults --strip \
         && docker-php-source delete \
 # 安装 PECL 扩展
         && pickle install $PECL_EXTENSION -n --defaults --continue-on-error \

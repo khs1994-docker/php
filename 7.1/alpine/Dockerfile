@@ -122,7 +122,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && chmod +x /usr/local/bin/pickle \
         && docker-php-source extract \
         # && docker-php-ext-configure gd \
-        echo " \
+        && echo " \
                                     --disable-gd-jis-conv \
                                     --with-freetype-dir=/usr \
                                     --with-jpeg-dir=/usr \
