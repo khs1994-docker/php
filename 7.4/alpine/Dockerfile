@@ -125,7 +125,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
 # 安装内置扩展
         && docker-php-source extract \
         && docker-php-ext-configure zip \
-                                    --with-libzip \
+                                    --with-zip \
         && docker-php-ext-install zip \
         && strip --strip-all $(php-config --extension-dir)/zip.so \
         # && docker-php-ext-configure gd \
@@ -140,14 +140,14 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && pickle install $PHP_EXTENSION -n --defaults --strip \
         && docker-php-source delete \
 # 安装 PECL 扩展
-        && pickle install $PECL_EXTENSION -n --defaults --continue-on-error \
+        && pickle install $PECL_EXTENSION -n --defaults \
            --strip --cleanup \
 # 默认不启用的扩展
         && pickle install \
              xdebug \
 # https://github.com/tideways/php-xhprof-extension.git
              https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-             -n --defaults --strip --cleanup --no-write --continue-on-error \
+             -n --defaults --strip --cleanup --no-write \
         && pickle install opcache \
         # && docker-php-ext-enable opcache \
         && apk del --no-network --no-cache .phpize-deps .php-fpm-build-deps \
