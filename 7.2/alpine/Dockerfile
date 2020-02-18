@@ -159,4 +159,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && chmod -R 777 /var/log/php-fpm \
         && php -m
 
+ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so php"
+
 WORKDIR /app

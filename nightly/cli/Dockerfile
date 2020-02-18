@@ -226,7 +226,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
           bison \
           libgcrypt-dev \
           libgpg-error-dev \
-          gnu-libiconv \
+          gnu-libiconv-dev \
           ${APK_DEV_EXTRA:-} \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
