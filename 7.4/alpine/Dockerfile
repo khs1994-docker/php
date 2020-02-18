@@ -84,6 +84,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          c-client \
                          icu-libs \
                          libgcrypt \
+                         gnu-libiconv \
                          ${APK_EXTRA:-} \
                          " \
                          # tidyhtml-libs \

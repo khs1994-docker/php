@@ -83,6 +83,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          enchant \
                          c-client \
                          icu-libs \
+                         gnu-libiconv \
                          ${APK_EXTRA:-} \
                          " \
                          # tidyhtml-libs \

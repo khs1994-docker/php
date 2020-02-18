@@ -83,6 +83,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          icu-libs \
                          ${APK_EXTRA:-} \
                          zlib \
+                         gnu-libiconv \
                          " \
                          # tidyhtml-libs \
 # *-dev 编译之后删除
