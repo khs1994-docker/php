@@ -162,4 +162,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         && php -m
 
+ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so php"
+
 WORKDIR /app
