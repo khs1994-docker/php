@@ -50,6 +50,7 @@ jobs:
       env:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        TENCENT_DOCKER_USERNAME: ${{secrets.TENCENT_DOCKER_USERNAME}}
     - run: |
         cp .env.example .env
         set -ex
