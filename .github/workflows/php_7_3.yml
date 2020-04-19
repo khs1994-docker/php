@@ -87,12 +87,12 @@ jobs:
 
         docker buildx build --push \
         --build-arg PHP_VERSION=7.0.33 \
-        --build-arg USERNAME=${DOCKER_HUB_USERNAME} \
+        --build-arg USERNAME=khs1994 \
         -t ${DOCKER_HUB_USERNAME}/php:7.0-custom custom/7.0
 
         docker buildx build --push \
         --build-arg PHP_VERSION=7.3.17 \
-        --build-arg USERNAME=${DOCKER_HUB_USERNAME} \
+        --build-arg USERNAME=khs1994 \
         -t ${DOCKER_HUB_USERNAME}/php:7.1-custom custom/7.1
 
         echo "full custom"
@@ -103,7 +103,7 @@ jobs:
         --build-arg APK_EXTRA="libxslt imagemagick-libs musl" \
         --build-arg APK_DEV_EXTRA="libxslt-dev imagemagick-dev imagemagick" \
         --build-arg PHP_VERSION=${PHP_TAG_VERSION} \
-        --build-arg USERNAME=${DOCKER_HUB_USERNAME} \
+        --build-arg USERNAME=khs1994 \
         --push \
         -t ${DOCKER_HUB_USERNAME}/php:7.3-full-custom 7.3/alpine \
       env:
