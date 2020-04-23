@@ -16,7 +16,7 @@ jobs:
       max-parallel: 1
       matrix:
         # TYPE: [CLI, FPM, UNIT, COMPOSER, SWOOLE, PPM, SUPERVISORD]
-        TYPE: [CLI, FPM, COMPOSER, SWOOLE]
+        TYPE: [CLI, FPM, COMPOSER, SWOOLE, UNIT]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -48,7 +48,7 @@ jobs:
     - run: |
         set -x
         echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
-        echo ${DOCKER_PASSWORD} | docker login -u ${TENCENT_DOCKER_USERNAME} --password-stdin ccr.ccs.tencentyun.com
+        echo ${DOCKER_PASSWORD} | docker login -u ${TENCENT_DOCKER_USERNAME} --password-stdin uswccr.ccs.tencentyun.com
       name: 'Docker Login'
       env:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
@@ -91,7 +91,7 @@ jobs:
         FOLDER: nightly
         PHP_TAG_VERSION: nightly
         TYPE: ${{ matrix.TYPE }}
-        add_mirror: ccr.ccs.tencentyun.com/khs1994/php
+        add_mirror: uswccr.ccs.tencentyun.com/khs1994/php
       name: 'Build Image'
 
     - run: |
