@@ -5,7 +5,7 @@
 # /var/lib/unit               => /usr/local/nginx-unit/state
 # /var/run/control.unit.sock  => /usr/local/nginx-unit/control.unit.sock
 
-echo "==> Initial Configuration, plase see https://unit.nginx.org/installation/#initial-configuration"
+echo "==> Initial Configuration, please see https://unit.nginx.org/installation/#initial-configuration"
 
 set -e
 
