@@ -230,7 +230,7 @@ jobs:
       if [ -n "$UNIT" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-unit-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-unit-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-unit-alpine ";done) \
         --platform ${PLATFORM} \
         ${IS_PUSH} ${FOLDER}/unit; \
       fi
@@ -238,14 +238,14 @@ jobs:
       if [ -n "$SUPERVISORD" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-supervisord-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-supervisord-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-supervisord-alpine ";done) \
         --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/supervisord; \
       fi
 
       if [ -n "$COMPOSER" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-composer-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-composer-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-composer-alpine ";done) \
         --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/composer; \
       fi
 
@@ -258,14 +258,14 @@ jobs:
       if [ -n "$SWOOLE" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-swoole-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-swoole-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-swoole-alpine ";done) \
         --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/swoole; \
       fi
 
       if [ -n "$FPM" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         --target=php -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-fpm-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-fpm-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-fpm-alpine ";done) \
         ${fpmTagOptions} \
         --platform ${PLATFORM} \
         ${IS_PUSH} ${FOLDER}/alpine; \
@@ -274,7 +274,7 @@ jobs:
       if [ -n "$CLI" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-cli-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-cli-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-cli-alpine ";done) \
         --platform ${PLATFORM} \
         ${IS_PUSH} ${FOLDER}/cli; \
       fi
@@ -282,7 +282,7 @@ jobs:
       if [ -n "$PPM" ];then docker buildx build $options \
         --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
         -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-ppm-alpine \
-        $(for item in `echo $mirror`;do echo " -t ${mirror}:${PHP_TAG_VERSION}-ppm-alpine ";done) \
+        $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-ppm-alpine ";done) \
         --platform ${PLATFORM} \
         ${IS_PUSH} ${FOLDER}/ppm; \
       fi
