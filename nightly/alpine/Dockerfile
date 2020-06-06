@@ -273,7 +273,7 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   && docker-php-ext-enable bcmath \
                            bz2 \
                            calendar \
-                           enchant2 \
+                           enchant \
                            exif \
                            gd \
                            gettext \
