@@ -109,7 +109,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         --with-ffi=shared \
-        --with-iconv=shared,/usr \
+        --with-iconv=/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-pdo=shared \
@@ -322,7 +322,6 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            ffi \
                            ctype \
                            dom \
-                           iconv \
                            pdo \
                            pdo_sqlite \
                            phar \
