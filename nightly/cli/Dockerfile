@@ -112,7 +112,6 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-iconv=shared,/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
-        --enable-json=shared \
         --enable-pdo=shared \
         --with-pdo-sqlite=shared,/usr \
         --enable-phar=shared \
@@ -264,7 +263,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
     --enable-mbstring=shared \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-    --enable-mysqlnd=shared \
+    --enable-mysqlnd \
 # https://wiki.php.net/rfc/libsodium
     --with-sodium=shared \
     \
@@ -323,7 +322,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            ffi \
                            ctype \
                            dom \
-                           json \
+                           iconv \
                            pdo \
                            pdo_sqlite \
                            phar \
@@ -337,7 +336,6 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            xmlwriter \
                            ftp \
                            mbstring \
-                           mysqlnd \
                            curl \
                            openssl \
                            zip \

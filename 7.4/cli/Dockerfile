@@ -225,7 +225,7 @@ RUN --mount=type=bind,from=php:7.4.6-alpine,source=/usr/src,target=/usr/local/sr
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
     --enable-mbstring=shared \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-    --enable-mysqlnd=shared \
+    --enable-mysqlnd \
 # https://wiki.php.net/rfc/libsodium
     --with-sodium=shared \
     \
@@ -282,6 +282,7 @@ RUN --mount=type=bind,from=php:7.4.6-alpine,source=/usr/src,target=/usr/local/sr
                            ctype \
                            dom \
                            json \
+                           iconv \
                            pdo \
                            pdo_sqlite \
                            phar \
@@ -295,7 +296,6 @@ RUN --mount=type=bind,from=php:7.4.6-alpine,source=/usr/src,target=/usr/local/sr
                            xmlwriter \
                            ftp \
                            mbstring \
-                           mysqlnd \
                            curl \
                            openssl \
                            zip \
