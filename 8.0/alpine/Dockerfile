@@ -29,8 +29,8 @@ ENV PHP_EXTENSION \
       intl \
       mysqli \
       pcntl \
-      # pdo_pgsql \
-      # pdo_mysql \
+      pdo_pgsql \
+      pdo_mysql \
       pgsql \
       sockets \
       sysvmsg \
@@ -43,10 +43,6 @@ ENV PHP_EXTENSION \
       shmop \
       ffi \
       ${PHP_EXTENSION_EXTRA:-}
-
-# ENV PHP_EXTENSION_NO_STRIP \
-#       pdo_pgsql \
-#       pdo_mysql
 
 ENV PECL_EXTENSION \
       # mongodb \
@@ -141,7 +137,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                                         --with-xpm" > /tmp/gd.configure.options \
         # && docker-php-ext-install $PHP_EXTENSION \
         && pickle install $PHP_EXTENSION -n --defaults --strip \
-        # && pickle install $PHP_EXTENSION_NO_STRIP -n --defaults \
         && docker-php-source delete \
 # 安装 PECL 扩展
         && echo "--enable-redis-igbinary" > /tmp/redis.configure.options \

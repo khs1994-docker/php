@@ -312,17 +312,8 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
   && apk add --no-cache $runDeps \
   \
   && strip --strip-all /usr/local/lib/libphp.so \
-  \
-  # && mkdir -p /tmp/php-ext \
-  # && mv $(php-config --extension-dir)/pdo_mysql.so \
-        # $(php-config --extension-dir)/pdo_pgsql.so \
-        # /tmp/php-ext \
   && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
-  # && mv /tmp/php-ext/*.so $(php-config --extension-dir) \
-  # && rm -rf /tmp/php-ext \
-  \
   && apk del --no-network .build-deps \
-  \
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 # RUN docker-php-ext-enable sodium
   \
