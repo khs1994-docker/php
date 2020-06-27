@@ -345,6 +345,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
       | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
   )" \
   && apk add --no-cache $runDeps \
+  && strip --strip-all /usr/local/lib/libphp.so \
   \
 #  && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del --no-network .build-deps \
@@ -372,7 +373,7 @@ ENV PECL_RUN_DEPS \
 
 ENV PECL_EXTENSION \
       # mongodb \
-      https://github.com/mongodb/mongo-php-library/archive/master.tar.gz \
+      # https://github.com/mongodb/mongo-php-driver/archive/master.tar.gz \
       igbinary \
       # redis \
       https://github.com/phpredis/phpredis/archive/develop.tar.gz \
