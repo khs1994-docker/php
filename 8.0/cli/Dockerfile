@@ -75,12 +75,6 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
             # --with-xpm \
         --with-pdo-mysql=shared \
         --with-pdo-pgsql=shared \
-        # --enable-pdo=shared \
-        --with-pdo-sqlite=shared,/usr \
-        --enable-pdo \
-        # --with-pdo-sqlite=/usr \
-        # --with-pdo-mysql \
-        # --with-pdo-pgsql \
         # --with-xsl=shared \
         --enable-bcmath=shared \
         --enable-pcntl=shared \
@@ -114,6 +108,8 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-iconv=/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
+        --enable-pdo \
+        --with-pdo-sqlite=shared,/usr \
         --enable-phar=shared \
         --enable-posix=shared \
         --enable-session=shared \
@@ -314,6 +310,7 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
   && strip --strip-all /usr/local/lib/libphp.so \
   && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del --no-network .build-deps \
+  \
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 # RUN docker-php-ext-enable sodium
   \
