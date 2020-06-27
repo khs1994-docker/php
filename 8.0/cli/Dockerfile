@@ -73,14 +73,14 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
             # --with-jpeg \
             # --with-webp \
             # --with-xpm \
-        # --with-pdo-mysql=shared \
-        # --with-pdo-pgsql=shared \
+        --with-pdo-mysql=shared \
+        --with-pdo-pgsql=shared \
         # --enable-pdo=shared \
-        # --with-pdo-sqlite=shared,/usr \
+        --with-pdo-sqlite=shared,/usr \
         --enable-pdo \
-        --with-pdo-sqlite=/usr \
-        --with-pdo-mysql \
-        --with-pdo-pgsql \
+        # --with-pdo-sqlite=/usr \
+        # --with-pdo-mysql \
+        # --with-pdo-pgsql \
         # --with-xsl=shared \
         --enable-bcmath=shared \
         --enable-pcntl=shared \
@@ -266,8 +266,8 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
                            ldap \
                            mysqli \
                            pcntl \
-                           # pdo_mysql \
-                           # pdo_pgsql \
+                           pdo_mysql \
+                           pdo_pgsql \
                            pgsql \
                            pspell \
                            shmop \
@@ -286,7 +286,7 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
                            ctype \
                            dom \
                            # pdo \
-                           # pdo_sqlite \
+                           pdo_sqlite \
                            phar \
                            posix \
                            session \
