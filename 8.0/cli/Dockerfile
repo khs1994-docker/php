@@ -78,6 +78,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         # --with-xsl=shared \
         --enable-bcmath=shared \
         --enable-pcntl=shared \
+        --with-external-pcre \
         --enable-shmop=shared \
         # --enable-soap=shared \
         --enable-sockets=shared \
@@ -191,13 +192,11 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
           krb5-dev \
           aspell-dev \
           openldap-dev \
-          pcre-dev \
+          pcre2-dev \
           # tidyhtml-dev \
           # net-snmp-dev \
           openldap-dev \
           gnu-libiconv-dev \
-          libgpg-error-dev \
-          libgcrypt-dev \
           oniguruma-dev \
           ${APK_DEV_EXTRA:-} \
   \
@@ -225,7 +224,7 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
     --enable-mbstring=shared \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-    --enable-mysqlnd \
+    --enable-mysqlnd=shared \
 # https://wiki.php.net/rfc/libsodium
     --with-sodium=shared \
     \
@@ -262,6 +261,8 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
                            ldap \
                            mysqli \
                            pcntl \
+                           openssl \
+                           mysqlnd \
                            pdo \
                            pdo_mysql \
                            pdo_pgsql \
@@ -295,7 +296,6 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
                            ftp \
                            mbstring \
                            curl \
-                           openssl \
                            zip \
                            ffi \
                            ${PHP_EXTENSION_EXTRA:-} \

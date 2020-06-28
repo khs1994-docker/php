@@ -83,6 +83,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         # --with-xsl=shared \
         --enable-bcmath=shared \
         --enable-pcntl=shared \
+        --with-external-pcre \
         --enable-shmop=shared \
         # --enable-soap=shared \
         --enable-sockets=shared \
@@ -230,8 +231,6 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
           openldap-dev \
           \
           bison \
-          libgcrypt-dev \
-          libgpg-error-dev \
           gnu-libiconv-dev \
           ${APK_DEV_EXTRA:-} \
   \
@@ -263,7 +262,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
     --enable-mbstring=shared \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-    --enable-mysqlnd \
+    --enable-mysqlnd=shared \
 # https://wiki.php.net/rfc/libsodium
     --with-sodium=shared \
     \
@@ -302,6 +301,8 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            ldap \
                            mysqli \
                            pcntl \
+                           openssl \
+                           mysqlnd \
                            pdo \
                            pdo_mysql \
                            pdo_pgsql \
@@ -335,7 +336,6 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            ftp \
                            mbstring \
                            curl \
-                           openssl \
                            zip \
                            ${PHP_EXTENSION_EXTRA:-} \
   && runDeps="$( \
