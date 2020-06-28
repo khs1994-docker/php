@@ -278,15 +278,15 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            enchant \
                            exif \
                            fileinfo \
-                           gd \
+                           # gd \
                            gettext \
                            gmp \
                            imap \
                            intl \
-                           mysqli \
                            pcntl \
                            openssl \
                            mysqlnd \
+                           # mysqli \
                            pdo \
                            pdo-sqlite \
                            pdo_mysql \
@@ -306,9 +306,11 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            # opcache 已默认安装，需要自行载入
                            opcache \
                            zip \
-                           # 7.4 +
+                           # iconv \
                            ffi \
                            ${PHP_EXTENSION_EXTRA:-} \
+  && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-gd.ini \
+  && echo "extension=mysqli.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-mysqli.ini \
   && runDeps="$( \
     scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
       | tr ',' '\n' \
@@ -378,6 +380,7 @@ ENTRYPOINT ["docker-php-entrypoint"]
 ENV PECL_BUILD_DEPS \
       libmemcached-dev \
       yaml-dev \
+      pcre2-dev \
       zlib-dev
 
 ENV PECL_RUN_DEPS \
@@ -419,7 +422,8 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
       && apk del --no-network .pecl_build_deps \
       && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
       && php -m \
-      && ls -la $(php-config --extension-dir)
+      && ls -la $(php-config --extension-dir) \
+      && php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));'
 
 STOPSIGNAL SIGQUIT
 EXPOSE 9000

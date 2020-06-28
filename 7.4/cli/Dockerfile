@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM --platform=$TARGETPLATFORM alpine:3.11
+FROM --platform=$TARGETPLATFORM alpine:3.12
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -14,7 +14,7 @@ ARG PHP_EXTENSION_EXTRA="ffi"
 
 ARG PECL_EXTENSION_EXTRA
 
-ARG APK_EXTRA="libgcrypt oniguruma"
+ARG APK_EXTRA="oniguruma"
 
 ARG APK_DEV_EXTRA="oniguruma-dev"
 
@@ -113,7 +113,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         # --with-ffi=shared \
-        --with-iconv=/usr \
+        --with-iconv=shared,/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-json=shared \
@@ -187,7 +187,7 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
           gmp-dev \
           # xmlrpc-c-dev \
           bzip2-dev \
-          enchant-dev \
+          enchant2-dev \
           imap-dev \
           gettext-dev \
           icu-dev \
@@ -199,6 +199,7 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
           # net-snmp-dev \
           openldap-dev \
           gnu-libiconv-dev \
+          patch \
           ${APK_DEV_EXTRA:-} \
   \
   && export CFLAGS="$PHP_CFLAGS" \
@@ -208,6 +209,12 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
   && mv /usr/include/gnu-libiconv/*.h /usr/include \
   && rm -rf /usr/include/gnu-libiconv \
   && cd /usr/src/php \
+# enchant-2.patch
+  && curl -fsSL -o enchant-2.patch https://git.alpinelinux.org/aports/plain/community/php7/enchant-2.patch?id=f09d70c946d9953ab11d45e4345ecd6705c1903c \
+  && patch -p1 < enchant-2.patch \
+  && rm -rf enchant-2.patch \
+  && ./buildconf --force \
+     \
   && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
   && ./configure \
     --build="$gnuArch" \
@@ -254,16 +261,16 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
                            enchant \
                            exif \
                            fileinfo \
-                           gd \
+                           # gd \
                            gettext \
                            gmp \
                            imap \
                            intl \
                            ldap \
-                           mysqli \
                            pcntl \
                            openssl \
                            mysqlnd \
+                           # mysqli \
                            pdo \
                            pdo_mysql \
                            pdo_pgsql \
@@ -299,7 +306,10 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
                            mbstring \
                            curl \
                            zip \
+                           iconv \
                            ${PHP_EXTENSION_EXTRA:-} \
+  && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-gd.ini \
+  && echo "extension=mysqli.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-mysqli.ini \
   && runDeps="$( \
     scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
       | tr ',' '\n' \
@@ -322,6 +332,7 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/src,target=/usr/local/sr
 ENV PECL_BUILD_DEPS \
       libmemcached-dev \
       yaml-dev \
+      pcre2-dev \
       zlib-dev
 
 ENV PECL_RUN_DEPS \
@@ -358,7 +369,8 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/local/bin,target=/opt/bi
       && apk del --no-network .pecl_build_deps \
       && rm -rf /tmp/* \
       && php -m \
-      && ls -la $(php-config --extension-dir)
+      && ls -la $(php-config --extension-dir) \
+      && php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));'
 
 WORKDIR /app
 
