@@ -298,7 +298,7 @@ RUN --mount=type=bind,from=php:8.0.0alpha1-alpine,source=/usr/src,target=/usr/lo
                            curl \
                            zip \
                            ffi \
-                           iconv \
+                           # iconv \
                            ${PHP_EXTENSION_EXTRA:-} \
   && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-gd.ini \
   && echo "extension=mysqli.so" > $PHP_INI_DIR/conf.d/docker-php-ext-z-mysqli.ini \
