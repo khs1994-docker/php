@@ -325,6 +325,12 @@ RUN --mount=type=bind,from=php:7.2.31-alpine,source=/usr/src,target=/usr/local/s
   && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && strip --strip-all /usr/local/lib/libphp7.so \
   && apk del --no-network .build-deps \
+  && rm -f /usr/local/include/php/TSRM/tsrm_win32.h \
+           /usr/local/include/php/TSRM/tsrm_config.w32.h \
+           /usr/local/include/php/Zend/zend_config.w32.h \
+           /usr/local/include/php/ext/mysqlnd/config-win.h \
+           /usr/local/include/php/ext/standard/winver.h \
+           /usr/local/php/man \
   # 创建日志文件夹
   && ln -sf /dev/stderr /var/log/xdebug-remote.log \
   && rm -rf /usr/src/*

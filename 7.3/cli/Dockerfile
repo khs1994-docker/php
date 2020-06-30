@@ -317,6 +317,12 @@ RUN --mount=type=bind,from=php:7.3.19-alpine,source=/usr/src,target=/usr/local/s
   && strip --strip-all /usr/local/lib/libphp7.so \
   && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del --no-network .build-deps \
+  && rm -f /usr/local/include/php/TSRM/tsrm_win32.h \
+           /usr/local/include/php/TSRM/tsrm_config.w32.h \
+           /usr/local/include/php/Zend/zend_config.w32.h \
+           /usr/local/include/php/ext/mysqlnd/config-win.h \
+           /usr/local/include/php/ext/standard/winver.h \
+           /usr/local/php/man \
 # https://github.com/docker-library/php/issues/443
   && pecl update-channels \
   && rm -rf /tmp/pear ~/.pearrc \
