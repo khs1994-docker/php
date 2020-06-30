@@ -322,7 +322,7 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   \
 #  && { find $(php-config --extension-dir) -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
   && apk del --no-network  .build-deps \
-  && rm -f /usr/local/include/php/TSRM/tsrm_win32.h \
+  && rm -rf /usr/local/include/php/TSRM/tsrm_win32.h \
            /usr/local/include/php/TSRM/tsrm_config.w32.h \
            /usr/local/include/php/Zend/zend_config.w32.h \
            /usr/local/include/php/ext/mysqlnd/config-win.h \
@@ -378,9 +378,9 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   && ln -sf /dev/stderr /var/log/php-fpm/xdebug-remote.log \
   && chmod -R 777 /var/log/php-fpm \
   && rm -rf /usr/src/php \
-  && curl -fsSL -o /usr/bin/pickle \
+  && curl -fsSL -o /usr/local/bin/pickle \
        https://github.com/khs1994-php/pickle/releases/download/nightly/pickle-debug.phar \
-  && chmod +x /usr/bin/pickle
+  && chmod +x /usr/local/bin/pickle
 
 ENTRYPOINT ["docker-php-entrypoint"]
 
