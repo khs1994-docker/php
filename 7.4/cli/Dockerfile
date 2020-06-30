@@ -14,12 +14,11 @@ ARG PHP_EXTENSION_EXTRA="ffi"
 
 ARG PECL_EXTENSION_EXTRA
 
-ARG APK_EXTRA="oniguruma libffi libgd"
+ARG APK_EXTRA="oniguruma libffi"
 
-ARG APK_DEV_EXTRA="oniguruma-dev libffi-dev gd-dev"
+ARG APK_DEV_EXTRA="oniguruma-dev libffi-dev"
 
 ARG PHP_EXTRA_CONFIGURE_ARGS_NEW="--enable-gd=shared \
-                                    --with-external-gd \
                                     --with-freetype \
                                     --with-jpeg \
                                     --with-webp \
