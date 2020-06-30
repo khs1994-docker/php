@@ -23,7 +23,7 @@ LABEL org.opencontainers.image.revision=$VCS_REF \
 
 COPY --from=builder /ext-swoole.tar.gz /
 
-FROM ${USERNAME}/php:${PHP_VERSION}-fpm-alpine as test
+FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-fpm-alpine as test
 
 COPY --from=bundle /ext-swoole.tar.gz /
 

@@ -10,7 +10,7 @@ ARG PHP_EXTENSION_EXTRA
 
 ARG PECL_EXTENSION_EXTRA
 
-ARG APK_EXTRA
+ARG APK_EXTRA="zstd-libs"
 
 ARG APK_DEV_EXTRA="zstd-dev "
 
@@ -29,6 +29,7 @@ RUN --mount=type=bind,from=php:7.4.7-alpine,source=/usr/local/bin,target=/opt/bi
       && apk add --no-cache --virtual .ext_build_deps \
                                       $PHPIZE_DEPS \
                                       $APK_DEV_EXTRA \
+      && apk add --no-cache --virtual .ext_zstd_run_deps ${APK_EXTRA} \
       && export PATH=$PATH:/opt/bin \
       && echo " \
            --with-libzstd \
@@ -57,7 +58,7 @@ LABEL org.opencontainers.image.revision=$VCS_REF \
 
 COPY --from=builder /ext-zstd.tar.gz /
 
-FROM ${USERNAME}/php:${PHP_VERSION}-fpm-alpine as test
+FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-fpm-alpine as test
 
 COPY --from=bundle /ext-zstd.tar.gz /
 
