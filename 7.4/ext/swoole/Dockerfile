@@ -13,7 +13,7 @@ ENV EXT_DEV_DIR=/usr/local/include/php/ext/${EXT_NAME}
 RUN set -x \
     && { \
     echo $(php-config --extension-dir)/${EXT_NAME}.so; \
-    echo $(if [ -d ${EXT_DEV_DIR} ];then echo ${EXT_DEV_DIR}); \
+    echo $( if [ -d ${EXT_DEV_DIR} ];then echo ${EXT_DEV_DIR}; fi ); \
     echo /tmp/ext-${EXT_NAME}-manifest.txt; \
      } | tee /tmp/ext-${EXT_NAME}-manifest.txt \
     && tar -zcvf ext-${EXT_NAME}.tar.gz --files-from /tmp/ext-${EXT_NAME}-manifest.txt
