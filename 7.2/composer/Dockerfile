@@ -12,8 +12,7 @@ ENV COMPOSER_DEP_APKS \
       # subversion \
       # mercurial \
       openssh-client \
-      tini \
-      gosu
+      tini
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_HOME=/tmp/composer \
@@ -44,6 +43,8 @@ RUN --mount=type=bind,from=composer:1.10.8,source=/usr/bin/composer,target=/opt/
     && chmod +x /docker-entrypoint.composer \
     && cp -a /opt/bin/composer /usr/bin/composer \
     && composer --ansi --version --no-interaction \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk add --no-cache gosu \
 # laravel 安装程序
 #    && composer global require --prefer-dist --ignore-platform-reqs "laravel/installer" \
 # composer 中国镜像
