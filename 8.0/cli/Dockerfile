@@ -349,7 +349,8 @@ ENV PECL_EXTENSION \
       https://github.com/phpredis/phpredis/archive/develop.tar.gz \
       memcached \
       # xdebug-beta \
-      yaml \
+      # yaml \
+      https://github.com/andypost/pecl-file_formats-yaml/archive/php8.tar.gz \
       ${PECL_EXTENSION_EXTRA:-}
 
 RUN --mount=type=bind,from=php:8.0.0alpha2-alpine,source=/usr/local/bin,target=/opt/bin,rw \
