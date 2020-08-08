@@ -152,13 +152,12 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   && apk add --no-cache git openssh-client \
   \
   && if [ -d php ];then \
-       cd php; \
-       git reset --hard origin/master; \
-       git pull --depth=15; \
-       git reset --hard ${PHP_VCS_REF}; \
+       git -C php reset --hard origin/master; \
+       git -C php pull --depth=15; \
+       git -C php reset --hard ${PHP_VCS_REF}; \
      else \
        git clone --depth=15 ${PHP_GIT} php; \
-       git reset --hard ${PHP_VCS_REF}; \
+       git -C php reset --hard ${PHP_VCS_REF}; \
      fi \
   \
   && apk del --no-network git openssh-client \
