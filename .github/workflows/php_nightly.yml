@@ -76,7 +76,8 @@ jobs:
         fi
 
         VCS_REF=`git rev-parse --short HEAD`
-        CACHE_IMAGE=docker.pkg.github.com/khs1994-docker/php/php
+        # CACHE_IMAGE=docker.pkg.github.com/khs1994-docker/php/php
+        CACHE_IMAGE=${DOCKER_HUB_USERNAME}/php
 
         git clone --depth=1 https://github.com/php/php-src $HOME/php-src
         PHP_VCS_REF=`git -C $HOME/php-src rev-parse --short HEAD`
