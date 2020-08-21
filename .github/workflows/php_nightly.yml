@@ -76,11 +76,12 @@ jobs:
         fi
 
         VCS_REF=`git rev-parse --short HEAD`
+        CACHE_IMAGE=docker.pkg.github.com/khs1994-docker/php/php
 
         git clone --depth=1 https://github.com/php/php-src $HOME/php-src
         PHP_VCS_REF=`git -C $HOME/php-src rev-parse --short HEAD`
 
-        options="--build-arg VCS_REF=$VCS_REF --build-arg PHP_VCS_REF=$PHP_VCS_REF --cache-from=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache --cache-to=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache"
+        options="--build-arg VCS_REF=$VCS_REF --build-arg PHP_VCS_REF=$PHP_VCS_REF --cache-from=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache --cache-to=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache"
         echo $options
 
         if [ "$TYPE" = "UNIT" ];then docker buildx build $options \
@@ -146,7 +147,7 @@ jobs:
         FOLDER: nightly
         PHP_TAG_VERSION: nightly
         TYPE: ${{ matrix.TYPE }}
-        add_mirror: registry.us-west-1.aliyuncs.com/khs1994/php docker.pkg.github.com/khs1994-docker/php/php
+        add_mirror:  docker.pkg.github.com/khs1994-docker/php/php
       name: 'Build Image'
 
     - run: |

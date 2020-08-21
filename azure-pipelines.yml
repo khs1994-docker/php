@@ -224,7 +224,9 @@ jobs:
       fi
 
       VCS_REF=`git rev-parse --short HEAD`
-      options="--build-arg USERNAME=$DOCKER_HUB_USERNAME --build-arg VCS_REF=$VCS_REF --cache-from=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache --cache-to=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache"
+      CACHE_IMAGE=docker.pkg.github.com/khs1994-docker/php/php
+
+      options="--build-arg USERNAME=$DOCKER_HUB_USERNAME --build-arg VCS_REF=$VCS_REF --cache-from=${DOCKER_HUB_USERNAME}/php:${FOLDER}-${TYPE,,}-cache --cache-to=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache"
       echo $options
 
       if [ "$TYPE" = "UNIT" ];then docker buildx build $options \
@@ -290,7 +292,8 @@ jobs:
       DOCKER_HUB_USERNAME: khs1994
       DOCKER_HUB_USERNAME_TEST: lrew
       PLATFORM: linux/amd64,linux/arm64,linux/arm/v7
-      add_mirror: registry.us-west-1.aliyuncs.com/khs1994/php docker.pkg.github.com/khs1994-docker/php/php
+      # registry.us-west-1.aliyuncs.com/khs1994/php
+      add_mirror: docker.pkg.github.com/khs1994-docker/php/php
     displayName: 'Build Image'
     timeoutInMinutes: 0
 
