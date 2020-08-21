@@ -54,6 +54,7 @@ jobs:
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         TENCENT_DOCKER_USERNAME: ${{secrets.TENCENT_DOCKER_USERNAME}}
         ALIYUN_DOCKER_USERNAME: ${{secrets.ALIYUN_DOCKER_USERNAME}}
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - run: |
         cp .env.example .env
         set -ex
