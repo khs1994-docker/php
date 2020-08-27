@@ -183,8 +183,8 @@ jobs:
       sudo systemctl cat docker
       sudo systemctl restart docker
       sleep 5
-      docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
-      cat /proc/sys/fs/binfmt_misc/qemu-aarch64
+      docker run --rm --privileged tonistiigi/binfmt:latest --install all
+      ls -la /proc/sys/fs/binfmt_misc
       docker buildx create --name mybuilder
       docker buildx use mybuilder
       docker buildx inspect --bootstrap
@@ -294,7 +294,7 @@ jobs:
       DOCKER_HUB_USERNAME_TEST: lrew
       PLATFORM: linux/amd64,linux/arm64,linux/arm/v7
       # registry.us-west-1.aliyuncs.com/khs1994/php
-      add_mirror: registry.us-east-1.aliyuncs.com/khs1994/us-php # docker.pkg.github.com/khs1994-docker/php/php
+      add_mirror: registry.us-east-1.aliyuncs.com/khs1994-us/php # docker.pkg.github.com/khs1994-docker/php/php
     displayName: 'Build Image'
     timeoutInMinutes: 0
 
