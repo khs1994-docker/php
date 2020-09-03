@@ -339,7 +339,8 @@ ENV PECL_BUILD_DEPS \
       libmemcached-dev \
       # yaml-dev \
       zlib-dev \
-      zstd-dev
+      zstd-dev \
+      pcre-dev
 
 ENV PECL_RUN_DEPS \
       libmemcached-libs \
