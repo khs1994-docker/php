@@ -6,6 +6,7 @@ os: linux
 dist: focal
 arch: arm64-graviton2
 virt: vm
+group: edge
 
 services:
 - docker
@@ -36,11 +37,12 @@ before_install:
 - sudo systemctl cat docker
 - sudo systemctl restart docker
 - sleep 5
-# - docker run --rm --privileged tonistiigi/binfmt:latest --install all
-# - ls -la /proc/sys/fs/binfmt_misc
+- docker run --rm --privileged tonistiigi/binfmt:latest --install all
+- ls -la /proc/sys/fs/binfmt_misc
 - docker buildx create --name mybuilder
 - docker buildx use mybuilder
 - docker buildx inspect --bootstrap
+- docker buildx ls
 
 script:
   - cp .env.example .env
@@ -56,7 +58,9 @@ script:
   - |
     if [ -z "$TRAVIS_TAG" ];then
       if [ "$PHP_VERSION" = 8_1_X -o "$PHP_VERSION" = nightly ];then
-        true
+        git clone --depth=1 https://github.com/php/php-src $HOME/php-src
+        export PHP_VCS_REF=`git -C $HOME/php-src rev-parse --short HEAD`
+        options+=' --build-arg PHP_VCS_REF'
       else
         true
       fi
@@ -64,34 +68,38 @@ script:
       true
     fi
   - |
-    if [ -n "$UNIT" ];then
+    if [ -n "$UNIT" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-unit-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-unit-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-unit-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-unit-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-unit-cache \
       ${IS_PUSH} ${FOLDER}/unit; \
     fi
   - |
-    if [ -n "$SUPERVISORD" ];then
+    if [ -n "$SUPERVISORD" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-supervisord-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-supervisord-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-supervisord-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-supervisord-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-supervisord-cache \
       ${IS_PUSH} ${FOLDER}/supervisord; \
     fi
   - |
     if [ -n "$COMPOSER" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-composer-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-composr-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-composer-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-composr-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-composer-cache \
       --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/composer; \
     fi
   - |
-    if [ -n "$SINGLE" ];then
+    if [ -n "$SINGLE" ];then \
+       set -x ; \
        docker buildx build $options \
        --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
        -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-single-alpine \
@@ -99,30 +107,33 @@ script:
     fi
   - |
     if [ -n "$SWOOLE" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-swoole-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-swoole-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-swoole-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-swoole-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-swoole-cache \
       ${IS_PUSH} ${FOLDER}/swoole; \
     fi
   - |
     if [ -n "$FPM" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       --target=php \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-fpm-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-fpm-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-fpm-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-fpm-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-fpm-cache \
       ${fpmTagOptions} --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/alpine; \
     fi
   - |
     if [ -n "$CLI" ];then \
+      set -x ; \
       docker buildx build $options \
       --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
       -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-cli-alpine \
-      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm64-cli-cache \
-      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm64-cli-cache \
+      --cache-from=${CACHE_IMAGE}:${FOLDER}-arm-cli-cache \
+      --cache-to=${CACHE_IMAGE}:${FOLDER}-arm-cli-cache \
       --platform ${PLATFORM} \
       ${IS_PUSH} ${FOLDER}/cli; \
     fi
@@ -175,7 +186,7 @@ env:
   - DOCKER_HUB_USERNAME=khs1994
   - DOCKER_CLI_EXPERIMENTAL=enabled
   # - PLATFORM=linux/amd64,linux/arm64,linux/arm/v7
-  - PLATFORM=linux/arm64
+  - PLATFORM=linux/arm64,linux/arm/v7
 
 matrix:
   fast_finish: true

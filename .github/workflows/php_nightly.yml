@@ -63,10 +63,12 @@ jobs:
         cp .env.example .env
         set -ex
 
-        if [ ! `echo $GITHUB_REF | grep 'refs/tags/'` ];then \
+        echo $GITHUB_REF | grep -q 'refs/tags/' && IS_TAG_EVENT=1 || true
+
+        if ! [ -n "${IS_TAG_EVENT}" -o "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ];then \
           export PLATFORM=linux/amd64; \
           if [ "$PHP_VERSION" = 8_1_X -o "$PHP_VERSION" = nightly ];then \
-            export PLATFORM=linux/amd64,linux/arm64,linux/arm/v7; \
+            export PLATFORM=linux/amd64,linux/arm,linux/arm/v7; \
             IS_PUSH=--push; \
             mirror="${add_mirror}"; \
           else \
@@ -86,7 +88,7 @@ jobs:
 
         options="--build-arg VCS_REF=$VCS_REF \
         --build-arg PHP_VCS_REF=$PHP_VCS_REF \
-        --cache-from=khs1994/php:${FOLDER}-arm64-${TYPE,,}-cache \
+        --cache-from=khs1994/php:${FOLDER}-arm-${TYPE,,}-cache \
         --cache-from=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache \
         --cache-to=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache"
         echo $options
@@ -147,6 +149,7 @@ jobs:
           --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/ppm; \
         fi
       env:
+        GITHUB_EVENT_NAME: ${{github.event_name}}
         DOCKER_HUB_USERNAME: khs1994
         DOCKER_HUB_USERNAME_TEST: lrew
         PLATFORM: linux/amd64,linux/arm64,linux/arm/v7

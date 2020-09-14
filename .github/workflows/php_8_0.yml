@@ -4,8 +4,17 @@ on:
     - master
     tags:
     - '*'
+  workflow_dispatch:
+    inputs:
+      PHP_VERSION:
+        description: php version
+        required: true
+        default: "8.0.0beta3"
 
 name: PHP_8.0
+
+env:
+  PHP_CUSTOM_VERSION: ${{ github.event.inputs.PHP_VERSION }}
 
 jobs:
   build:
@@ -60,7 +69,13 @@ jobs:
         cp .env.example .env
         set -ex
 
-        if [ ! `echo $GITHUB_REF | grep 'refs/tags/'` ];then \
+        if [ -n "${PHP_CUSTOM_VERSION}" ];then
+          export PHP_TAG_VERSION=$PHP_CUSTOM_VERSION
+        fi
+
+        echo $GITHUB_REF | grep -q 'refs/tags/' && IS_TAG_EVENT=1 || true
+
+        if ! [ -n "${IS_TAG_EVENT}" -o "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ];then \
           export PLATFORM=linux/amd64,linux/arm64; \
           if [ "$PHP_VERSION" = 8_1_X -o "$PHP_VERSION" = nightly ];then \
             export PLATFORM=linux/amd64,linux/arm64,linux/arm/v7; \
@@ -81,7 +96,7 @@ jobs:
 
         options="--build-arg USERNAME=$DOCKER_HUB_USERNAME \
         --build-arg VCS_REF=$VCS_REF \
-        --cache-from=khs1994/php:${FOLDER}-arm64-${TYPE,,}-cache \
+        --cache-from=khs1994/php:${FOLDER}-arm-${TYPE,,}-cache \
         --cache-from=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache \
         --cache-to=${CACHE_IMAGE}:${FOLDER}-${TYPE,,}-cache"
 
@@ -141,6 +156,7 @@ jobs:
           --platform ${PLATFORM} ${IS_PUSH} ${FOLDER}/ppm; \
         fi
       env:
+        GITHUB_EVENT_NAME: ${{github.event_name}}
         DOCKER_HUB_USERNAME: khs1994
         DOCKER_HUB_USERNAME_TEST: lrew
         PLATFORM: linux/amd64,linux/arm64,linux/arm/v7
