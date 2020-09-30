@@ -56,12 +56,14 @@ jobs:
         # echo ${DOCKER_PASSWORD} | docker login -u ${TENCENT_DOCKER_USERNAME} --password-stdin uswccr.ccs.tencentyun.com
         echo ${DOCKER_PASSWORD} | docker login -u ${ALIYUN_DOCKER_USERNAME} --password-stdin registry.us-east-1.aliyuncs.com
         echo ${GHCR_IO_TOKEN} | docker login -u khs1994 --password-stdin ghcr.io
+        echo ${CODING_DOCKER_PASSWORD} | docker login -u khs1994-1601432822176 --password-stdin pcit-docker.pkg.coding.net
       name: 'Docker Login'
       env:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         TENCENT_DOCKER_USERNAME: ${{secrets.TENCENT_DOCKER_USERNAME}}
         ALIYUN_DOCKER_USERNAME: ${{secrets.ALIYUN_DOCKER_USERNAME}}
+        CODING_DOCKER_PASSWORD: ${{secrets.CODING_DOCKER_PASSWORD}}
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         GHCR_IO_TOKEN: ${{secrets.GHCR_IO_TOKEN}}
     - run: |
@@ -164,7 +166,7 @@ jobs:
         FOLDER: nightly
         PHP_TAG_VERSION: nightly
         TYPE: ${{ matrix.TYPE }}
-        add_mirror: registry.us-east-1.aliyuncs.com/khs1994-us/php # ghcr.io/khs1994/php
+        add_mirror: registry.us-east-1.aliyuncs.com/khs1994-us/php pcit-docker.pkg.coding.net/khs1994-docker/khs1994/php # ghcr.io/khs1994/php
         PHP_VCS_REF: ${{ github.event.inputs.PHP_VCS_REF }}
       name: 'Build Image'
 
