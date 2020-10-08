@@ -103,7 +103,7 @@ jobs:
 
         if [ "$TYPE" = "UNIT" ];then
           echo ::group::Build $TYPE
-          docker buildx build $options
+          docker buildx build $options \
           --build-arg ALPINE_URL=${ALPINE_URL:-dl-cdn.alpinelinux.org} \
           -t $DOCKER_HUB_USERNAME/php:${PHP_TAG_VERSION}-unit-alpine \
           $(for item in `echo $mirror`;do echo " -t ${item}:${PHP_TAG_VERSION}-unit-alpine ";done) \
