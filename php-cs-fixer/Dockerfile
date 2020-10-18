@@ -11,7 +11,7 @@ FROM alpine as downloader
 ENV PHP_CS_FIXER_VERSION=2.16.4
 
 RUN set -x ; apk add --no-cache curl \
-    && curl -fsSL https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v${PHP_CS_FIXER_VERSION}/php-cs-fixer.phar \
+    && curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v${PHP_CS_FIXER_VERSION}/php-cs-fixer.phar \
          -O /usr/local/bin/php-cs-fixer \
     && chmod +x /usr/local/bin/php-cs-fixer
 
