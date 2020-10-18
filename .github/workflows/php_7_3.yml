@@ -184,21 +184,25 @@ jobs:
         ######
 
         if [ "$TYPE" = "COMPOSER" ];then
-            echo ::group::Build $TYPE
+            echo ::group::Build php-cs-fixer
             docker buildx build --build-arg PHP_VERSION=${PHP_TAG_VERSION} \
               -t $DOCKER_HUB_USERNAME/php:php-cs-fixer \
               --build-arg USERNAME=$DOCKER_HUB_USERNAME \
               --cache-from=$DOCKER_HUB_USERNAME/php:php-cs-fixer-cache \
               --cache-to=$DOCKER_HUB_USERNAME/php:php-cs-fixer-cache \
               --platform ${PLATFORM} ${IS_PUSH} php-cs-fixer
+            echo ::endgroup::
 
+            echo ::group::Build sami
             docker buildx build --build-arg PHP_VERSION=${PHP_TAG_VERSION} \
               -t $DOCKER_HUB_USERNAME/php:sami \
               --build-arg USERNAME=$DOCKER_HUB_USERNAME \
               --cache-from=$DOCKER_HUB_USERNAME/php:sami-cache \
               --cache-to=$DOCKER_HUB_USERNAME/php:sami-cache \
               --platform ${PLATFORM} ${IS_PUSH} sami
+            echo ::endgroup::
 
+            echo ::group::Build phpdox
             docker buildx build --build-arg PHP_VERSION=${PHP_TAG_VERSION} \
               -t $DOCKER_HUB_USERNAME/php:phpdox \
               --build-arg USERNAME=$DOCKER_HUB_USERNAME \
@@ -224,7 +228,7 @@ jobs:
         -t ${DOCKER_HUB_USERNAME}/php:7.1-custom custom/7.1
         echo ::endgroup::
 
-        echo ::group::Build full custom"
+        echo ::group::Build full custom
 
         docker buildx build \
         --build-arg PHP_EXTENSION_EXTRA="wddx xsl" \
