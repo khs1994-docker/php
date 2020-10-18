@@ -7,8 +7,8 @@ FROM alpine as downloader
 ENV PHPDOX_VERSION=0.12.0
 
 RUN set -x ; apk add --no-cache curl \
-    && curl -L https://github.com/theseer/phpdox/releases/download/${PHPDOX_VERSION}/phpdox-${PHPDOX_VERSION}.phar \
-         -O /usr/local/bin/phpdox \
+    && curl -fsSL https://github.com/theseer/phpdox/releases/download/${PHPDOX_VERSION}/phpdox-${PHPDOX_VERSION}.phar \
+         -o /usr/local/bin/phpdox \
     && chmod +x /usr/local/bin/phpdox
 
 FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
