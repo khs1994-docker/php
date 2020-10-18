@@ -8,7 +8,7 @@ FROM alpine as downloader
 
 # Copy/Paste Detector (CPD) for PHP code.  https://github.com/sebastianbergmann/phploc
 
-ENV PHPLOC_VERSION=7.0.1
+ARG PHPLOC_VERSION=7.0.1
 
 RUN set -x ; apk add --no-cache curl \
     && curl -fsSL https://phar.phpunit.de/phploc-${PHPLOC_VERSION}.phar -o /usr/local/bin/phploc \

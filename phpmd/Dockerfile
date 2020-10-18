@@ -8,7 +8,7 @@ FROM alpine as downloader
 
 # https://github.com/phpmd/phpmd
 
-ENV PHPMD_VERSION=2.9.1
+ARG PHPMD_VERSION=2.9.1
 
 RUN set -x ; apk add --no-cache curl \
     && curl -fsSL https://github.com/phpmd/phpmd/releases/download/${PHPMD_VERSION}/phpmd.phar \
