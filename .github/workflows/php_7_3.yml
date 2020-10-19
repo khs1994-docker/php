@@ -214,16 +214,6 @@ jobs:
               --platform ${PLATFORM} ${IS_PUSH} phpdox
             echo "::endgroup::"
 
-            echo "::group::Build phpcpd"
-            docker buildx build \
-              -t $DOCKER_HUB_USERNAME/php:phpcpd \
-              $(for item in `echo $mirror`;do echo " -t ${item}:phpcpd ";done) \
-              --build-arg USERNAME=$DOCKER_HUB_USERNAME \
-              --cache-from=$DOCKER_HUB_USERNAME/php:phpcpd-cache \
-              --cache-to=$DOCKER_HUB_USERNAME/php:phpcpd-cache \
-              --platform ${PLATFORM} ${IS_PUSH} phpcpd
-            echo "::endgroup::"
-
             echo "::group::Build phploc"
             docker buildx build \
               -t $DOCKER_HUB_USERNAME/php:phploc \
@@ -232,6 +222,16 @@ jobs:
               --cache-from=$DOCKER_HUB_USERNAME/php:phploc-cache \
               --cache-to=$DOCKER_HUB_USERNAME/php:phploc-cache \
               --platform ${PLATFORM} ${IS_PUSH} phploc
+            echo "::endgroup::"
+
+            echo "::group::Build phpcpd"
+            docker buildx build \
+              -t $DOCKER_HUB_USERNAME/php:phpcpd \
+              $(for item in `echo $mirror`;do echo " -t ${item}:phpcpd ";done) \
+              --build-arg USERNAME=$DOCKER_HUB_USERNAME \
+              --cache-from=$DOCKER_HUB_USERNAME/php:phpcpd-cache \
+              --cache-to=$DOCKER_HUB_USERNAME/php:phpcpd-cache \
+              --platform ${PLATFORM} ${IS_PUSH} phpcpd
             echo "::endgroup::"
 
             echo "::group::Build phpmd"
