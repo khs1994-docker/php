@@ -20,8 +20,8 @@ RUN set -x \
                                   openssl-dev \
                                   linux-headers \
                                   pcre-dev \
-  && ./configure --prefix=/usr/local/nginx-unit --openssl \
-  && ./configure --no-pcre2 php \
+  && ./configure --prefix=/usr/local/nginx-unit --openssl --no-pcre2 \
+  && ./configure php \
        --module=php72 \
        --lib-path=/usr/local/lib \
        --config=/usr/local/bin/php-config \
