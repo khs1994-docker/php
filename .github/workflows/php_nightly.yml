@@ -72,7 +72,7 @@ jobs:
         if ! [ -n "${IS_TAG_EVENT}" -o "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ];then \
           export PLATFORM=linux/amd64; \
           if [ "$PHP_VERSION" = 8_1_X -o "$PHP_VERSION" = nightly ];then \
-            export PLATFORM=linux/amd64,linux/arm64,linux/arm/v7; \
+            export PLATFORM=linux/amd64,linux/arm64; \
             IS_PUSH=--push; \
             mirror="${add_mirror}"; \
           else \
@@ -208,7 +208,7 @@ jobs:
         GITHUB_EVENT_NAME: ${{github.event_name}}
         DOCKER_HUB_USERNAME: khs1994
         DOCKER_HUB_USERNAME_TEST: lrew
-        PLATFORM: linux/amd64,linux/arm64,linux/arm/v7
+        PLATFORM: linux/amd64,linux/arm64 #,linux/arm/v7
         PHP_VERSION: nightly
         FOLDER: nightly
         PHP_TAG_VERSION: nightly
