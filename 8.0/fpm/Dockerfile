@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG PHP_VERSION=8.0.0
+ARG PHP_VERSION=8.0.1
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-fpm-alpine as php
 
@@ -158,8 +158,8 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
            --strip --cleanup \
 # 默认不启用的扩展
         && pickle install \
-             # xdebug \
-             https://github.com/xdebug/xdebug/archive/master.tar.gz \
+             xdebug \
+             # https://github.com/xdebug/xdebug/archive/master.tar.gz \
 # https://github.com/tideways/php-xhprof-extension.git
              https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
              -n --defaults --strip --cleanup --no-write \
