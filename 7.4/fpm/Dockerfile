@@ -73,7 +73,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          libexif \
                          gmp \
                          # xmlrpc-c \
-                         enchant \
+                         enchant2 \
                          c-client \
                          icu-libs \
                          gnu-libiconv \
@@ -99,7 +99,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          gmp-dev \
                          # xmlrpc-c-dev \
                          bzip2-dev \
-                         enchant-dev \
+                         enchant2-dev \
                          imap-dev \
                          gettext-dev \
                          libwebp-dev \
