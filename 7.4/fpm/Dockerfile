@@ -122,8 +122,8 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && curl -fsSL -o enchant-2.patch https://raw.githubusercontent.com/alpinelinux/aports/b315e28b96f16c2a8973a55a736e1e35482203dd/community/php7/enchant-2.patch \
         && patch -p1 < enchant-2.patch \
         && rm -rf enchant-2.patch \
-#        && ./buildconf --force \
-        && docker-php-ext-configure enchant \
+        && ./buildconf --force \
+        # && docker-php-ext-configure enchant \
         && cd - \
         \
         && docker-php-ext-configure zip \
