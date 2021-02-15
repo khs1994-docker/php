@@ -119,9 +119,11 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && docker-php-source extract \
 # enchant-2.patch
         && cd /usr/src/php \
-        && curl -fsSL -o enchant-2.patch https://salsa.debian.org/php-team/php/-/raw/debian/main/7.4/debian/patches/0041-Use-libenchant-2-when-available.patch \
-        && patch -p1 < enchant-2.patch \
-        && rm -rf enchant-2.patch \
+        && curl -fsSL -o enchant-2-1.patch https://salsa.debian.org/php-team/php/-/raw/debian/main/7.4/debian/patches/0040-remove-deprecated-call-and-deprecate-function-to-be-.patch \
+        && curl -fsSL -o enchant-2-2.patch https://salsa.debian.org/php-team/php/-/raw/debian/main/7.4/debian/patches/0041-Use-libenchant-2-when-available.patch \
+        && patch -p1 < enchant-2-1.patch \
+        && patch -p1 < enchant-2-2.patch \
+        && rm -rf enchant-2-*.patch \
 #        && ./buildconf --force \
         && docker-php-ext-configure enchant \
         && cd - \
