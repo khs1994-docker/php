@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG PHP_VERSION=7.4.20
+ARG PHP_VERSION=8.1.0alpha1
 ARG USERNAME=khs1994
 ARG BASE=fpm
 
@@ -9,24 +9,15 @@ FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
 
 ENV COMPOSER_DEP_APKS \
       git \
+      # 以下两个均为版本控制系统
+      # subversion \
+      # mercurial \
       openssh-client \
       tini
-
-# https://getcomposer.org/doc/03-cli.md#environment-variables
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_HOME=/tmp/composer \
     COMPOSER_NO_INTERACTION=1 \
-    # COMPOSER_ALLOW_XDEBUG= \
-    # COMPOSER_AUTH= \
-    # COMPOSER_CAFILE= \
-    # COMPOSER_CACHE_DIR=/tmp/composer/cache \
-    # COMPOSER_DISABLE_XDEBUG_WARN= \
-    # COMPOSER_DISCARD_CHANGES= \
-    # COMPOSER_HTACCESS_PROTECT= \
-    # COMPOSER_MEMORY_LIMIT= \
-    COMPOSER_PROCESS_TIMEOUT=300 \
-    # COMPOSER_SELF_UPDATE_TARGET= \
     COMPOSER_VERSION=2.1.3 \
     PS1="[\u@\h \w]# "
 
@@ -58,12 +49,6 @@ RUN --mount=type=bind,from=composer:2.1.3,source=/usr/bin/composer,target=/opt/b
     \
 # laravel 安装程序
 #    && composer global require --prefer-dist --ignore-platform-reqs "laravel/installer" \
-    \
-#    && ln -sf /tmp/composer/vendor/bin/* /usr/local/bin \
-    && rm -rf /tmp/composer/cache \
-              /tmp/composer/composer.lock \
-              /tmp/installer.php \
-              /tmp/*.pub \
 # composer 中国镜像
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 

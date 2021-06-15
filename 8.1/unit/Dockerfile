@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:experimental
-ARG PHP_VERSION=7.4.20
+ARG PHP_VERSION=8.1.0alpha1
 ARG USERNAME=khs1994
+ARG BASE=cli
 
-FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-cli-alpine
+FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -18,9 +19,14 @@ RUN set -x \
                                   openssl-dev \
                                   linux-headers \
                                   pcre2-dev \
+                                  patch \
+  \
+  # && curl -L https://patch-diff.githubusercontent.com/raw/nginx/unit/pull/474.diff -O \
+  # && patch -p1 < 474.diff \
+  \
   && ./configure --prefix=/usr/local/nginx-unit --openssl \
   && ./configure php \
-       --module=php74 \
+       --module=php80 \
        --lib-path=/usr/local/lib \
        --config=/usr/local/bin/php-config \
   && make -j "$(nproc)" \
