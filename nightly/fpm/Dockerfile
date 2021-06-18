@@ -221,6 +221,8 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   && export CFLAGS="$PHP_CFLAGS" \
             CPPFLAGS="$PHP_CPPFLAGS" \
             LDFLAGS="$PHP_LDFLAGS" \
+            ARGON2_LIBS="-largon2" \
+            ARGON2_CFLAGS="-I/usr/include" \
   # && docker-php-source extract \
   && cd /usr/src/php \
   && make clean || true \
@@ -302,7 +304,7 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            # opcache 已默认安装，需要自行载入
                            opcache \
                            zip \
-                           iconv \
+                           # iconv \
                            ffi \
                            ${PHP_EXTENSION_EXTRA:-} \
   && echo "extension=exif" > $PHP_INI_DIR/conf.d/docker-php-ext-z-exif.ini \

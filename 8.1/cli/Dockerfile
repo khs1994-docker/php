@@ -110,7 +110,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         --with-ffi=shared \
-        --with-iconv=shared \
+        --with-iconv=/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-pdo=shared \
@@ -312,7 +312,7 @@ RUN --mount=type=bind,from=upstream,source=/usr/src,target=/usr/local/src,rw \
                            curl \
                            zip \
                            ffi \
-                           iconv \
+                           # iconv \
                            ${PHP_EXTENSION_EXTRA:-} \
   && echo "extension=exif" > $PHP_INI_DIR/conf.d/docker-php-ext-z-exif.ini \
   && echo "extension=gd" > $PHP_INI_DIR/conf.d/docker-php-ext-z-gd.ini \

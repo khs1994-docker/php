@@ -110,7 +110,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         --with-ffi=shared \
-        --with-iconv=shared \
+        --with-iconv=/usr \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-pdo=shared \
@@ -235,6 +235,8 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
   && export CFLAGS="$PHP_CFLAGS" \
             CPPFLAGS="$PHP_CPPFLAGS" \
             LDFLAGS="$PHP_LDFLAGS" \
+            ARGON2_LIBS="-largon2" \
+            ARGON2_CFLAGS="-I/usr/include" \
   # && docker-php-source extract \
   && cd /usr/src/php \
   && make clean || true \
@@ -331,7 +333,7 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
                            mbstring \
                            curl \
                            zip \
-                           iconv \
+                           # iconv \
                            ${PHP_EXTENSION_EXTRA:-} \
   && echo "extension=exif" > $PHP_INI_DIR/conf.d/docker-php-ext-z-exif.ini \
   && echo "extension=gd" > $PHP_INI_DIR/conf.d/docker-php-ext-z-gd.ini \
