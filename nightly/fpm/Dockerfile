@@ -118,7 +118,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
 # Enable linker optimization (this sorts the hash buckets to improve cache locality, and is non-default)
 # Adds GNU HASH segments to generated executables (this is used if present, and is much faster than sysv hash; in this configuration, sysv hash is also generated)
 # https://github.com/docker-library/php/issues/272
-ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
+ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
@@ -302,7 +302,7 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            # opcache 已默认安装，需要自行载入
                            opcache \
                            zip \
-                           # iconv \
+                           iconv \
                            ffi \
                            ${PHP_EXTENSION_EXTRA:-} \
   && echo "extension=exif" > $PHP_INI_DIR/conf.d/docker-php-ext-z-exif.ini \
