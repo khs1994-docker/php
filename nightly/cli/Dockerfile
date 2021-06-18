@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:labs
 FROM --platform=$TARGETPLATFORM alpine:3.13
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
@@ -110,7 +110,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         --with-ffi=shared \
-        --with-iconv=/usr \
+        --with-iconv=shared \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-pdo=shared \
@@ -235,8 +235,6 @@ RUN --mount=type=bind,from=php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
   && export CFLAGS="$PHP_CFLAGS" \
             CPPFLAGS="$PHP_CPPFLAGS" \
             LDFLAGS="$PHP_LDFLAGS" \
-            ARGON2_LIBS="-largon2" \
-            ARGON2_CFLAGS="-I/usr/include" \
   # && docker-php-source extract \
   && cd /usr/src/php \
   && make clean || true \

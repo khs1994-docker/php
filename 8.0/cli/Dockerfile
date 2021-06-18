@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:labs
 ARG PHP_VERSION=8.0.7
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-alpine as upstream
@@ -110,7 +110,7 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-mysqli=shared \
         --with-pgsql=shared \
         --with-ffi=shared \
-        --with-iconv=/usr \
+        --with-iconv=shared \
         --enable-ctype=shared \
         --enable-dom=shared \
         --enable-pdo=shared \
