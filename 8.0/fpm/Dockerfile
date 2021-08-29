@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-ARG PHP_VERSION=8.0.8
+ARG PHP_VERSION=8.0.9
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-fpm-alpine3.13 as php
 
@@ -37,7 +37,7 @@ ENV PHP_EXTENSION \
       sysvsem \
       sysvshm \
       # tidy \
-      # xmlrpc \
+      # xmlrpc \ 8.0 removed
       # xsl \
       zip \
       shmop \
@@ -89,7 +89,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          libbz2 \
                          libexif \
                          gmp \
-                         # xmlrpc-c \
+                         # xmlrpc-c \ 8.0 removed
                          enchant2 \
                          c-client \
                          icu-libs \
@@ -115,7 +115,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          libwebp-dev \
                          libexif-dev \
                          gmp-dev \
-                         # xmlrpc-c-dev \
+                         # xmlrpc-c-dev \ 8.0 removed
                          bzip2-dev \
                          enchant2-dev \
                          imap-dev \
