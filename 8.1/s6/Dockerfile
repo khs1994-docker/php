@@ -9,9 +9,10 @@ FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
 RUN --mount=type=bind,from=khs1994/s6:3.1.0.1,source=/,target=/tmp/s6 \
     --network=none \
     set -x \
-    && tar -xvf /tmp/s6/s6-overlay.tar.xz -C /
+    && tar -xvf /tmp/s6/s6-overlay-noarch.tar.xz -C / \
+    && tar -xvf /tmp/s6/s6-overlay.tar.xz -C / \
 # https://github.com/MinchinWeb/docker-base/commit/f5e350dcf3523a424772a1e42a3dba3200d7a2aa
-#    && ln -s /init /s6-init
+    && ln -s /init /s6-init
 
 VOLUME [ "/etc/services.d"]
 
@@ -29,7 +30,7 @@ ENV S6_KEEP_ENV=0 \
     S6_READ_ONLY_ROOT=0 \
     S6_SYNC_DISKS=0
 
-# ENTRYPOINT ["/command/s6-linux-init"]
+# ENTRYPOINT ["/s6-init"]
 
 ENTRYPOINT ["/command/s6-svscan", "-t0", "/etc/services.d"]
 
