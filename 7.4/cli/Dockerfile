@@ -359,10 +359,11 @@ ENV PECL_RUN_DEPS \
 
 ENV PECL_EXTENSION \
       igbinary \
-      redis \
+      # redis \
+      https://codeload.github.com/phpredis/phpredis/tar.gz/refs/heads/develop \
       memcached \
       # xdebug-beta \
-      https://github.com/kjdev/php-ext-zstd/archive/0.9.0.tar.gz \
+      https://github.com/kjdev/php-ext-zstd/archive/0.11.0.tar.gz \
       ${PECL_EXTENSION_EXTRA:-}
 
 RUN --mount=type=bind,from=upstream,source=/usr/local/bin,target=/opt/bin,rw \
