@@ -359,7 +359,8 @@ ENV PECL_RUN_DEPS \
 
 ENV PECL_EXTENSION \
       igbinary \
-      redis \
+      # redis \
+      https://github.com/phpredis/phpredis/archive/develop.tar.gz \
       # https://codeload.github.com/phpredis/phpredis/tar.gz/refs/heads/develop \
       memcached \
       # xdebug-beta \
