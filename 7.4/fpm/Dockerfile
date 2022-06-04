@@ -46,7 +46,7 @@ ENV PHP_EXTENSION \
 ENV PECL_EXTENSION \
       igbinary \
       # redis \
-      https://codeload.github.com/phpredis/phpredis/tar.gz/refs/heads/develop \
+      https://github.com/phpredis/phpredis/archive/develop.tar.gz \
       memcached \
 # 安装测试版的扩展，可以在扩展名后加 -beta
       # xdebug-beta \
