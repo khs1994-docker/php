@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:labs
 ARG PHP_VERSION=7.4.30
 ARG USERNAME=khs1994
-ARG BASE=fpm
+# ARG BASE=fpm
+ARG BASE=cli
 
 FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
 
@@ -27,12 +28,12 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
     # COMPOSER_MEMORY_LIMIT= \
     COMPOSER_PROCESS_TIMEOUT=300 \
     # COMPOSER_SELF_UPDATE_TARGET= \
-    COMPOSER_VERSION=2.4.0 \
+    COMPOSER_VERSION=2.4.1 \
     PS1="[\u@\h \w]# "
 
 # https://github.com/composer/docker
 
-RUN --mount=type=bind,from=composer:2.4.0,source=/usr/bin/composer,target=/opt/bin/composer \
+RUN --mount=type=bind,from=composer:2.4.1,source=/usr/bin/composer,target=/opt/bin/composer \
     set -x \
     && apk add --no-cache --virtual .composer_deps $COMPOSER_DEP_APKS \
     && { echo "memory_limit=-1"; \
