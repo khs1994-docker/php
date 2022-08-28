@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:labs
+
 ARG PHP_VERSION=7.4.30
 ARG USERNAME=khs1994
 ARG BASE=composer
@@ -25,7 +27,10 @@ ENV EXT_RUN_DEP \
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
-RUN set -x \
+RUN --mount=type=bind,from=php:7.4.30-cli-alpine,source=/usr/src,target=/usr/src,rw \
+    --mount=type=bind,from=php:7.4.30-cli-alpine,source=/usr/local/bin,target=/opt/bin,rw \
+    set -x \
+    && export PATH=$PATH:/opt/bin \
     && sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
     # 安装构建依赖，构建之后可以删除
     && apk add --no-cache --virtual .pecl_build_deps $EXT_BUILD_DEP $PHPIZE_DEPS \
