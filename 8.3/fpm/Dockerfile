@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:labs
-ARG PHP_VERSION=8.1.15
+ARG PHP_VERSION=8.3.0beta1
 
-FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-fpm-alpine3.17 as php
+FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-fpm-alpine3.18 as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -91,7 +91,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          enchant2 \
                          c-client \
                          icu-libs \
-                         # gnu-libiconv \
                          zstd-libs \
 # https://github.com/xdebug/xdebug/pull/835
                          linux-headers \
@@ -130,8 +129,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          # libxslt-dev \
                          # yaml-dev \
         && apk add --no-cache --virtual .php-fpm-run-deps $PHP_FPM_RUN_DEPS \
-        && if ! [ -f /usr/bin/gnu-iconv ];then \
-              apk add --no-cache --repository http://${ALPINE_URL}/alpine/v3.13/community/ gnu-libiconv=1.15-r3;fi \
         && apk add --no-cache --virtual .php-fpm-build-deps $PHP_FPM_BUILD_DEPS \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
         && curl -fsSL -o /usr/local/bin/pickle \
@@ -162,8 +159,8 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
            --strip --cleanup \
 # 默认不启用的扩展
         && pickle install \
-             xdebug \
-             # https://github.com/xdebug/xdebug/archive/master.tar.gz \
+             # xdebug \
+             https://github.com/xdebug/xdebug/archive/master.tar.gz \
 # https://github.com/tideways/php-xhprof-extension.git
              https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
              -n --defaults --strip --cleanup --no-write \
@@ -180,11 +177,9 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         && php -m \
         && ls -la $(php-config --extension-dir) \
-        && LD_PRELOAD="/usr/lib/preloadable_libiconv.so php" php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));' \
+        && php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));' \
 # smoke test
         && php --version
-
-ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so php"
 
 WORKDIR /app
 

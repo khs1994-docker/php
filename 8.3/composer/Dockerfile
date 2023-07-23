@@ -1,17 +1,12 @@
 # syntax=docker/dockerfile:labs
-
+ARG PHP_VERSION=8.3.0beta1
 ARG USERNAME=khs1994
 # ARG BASE=fpm
 ARG BASE=cli
 
-FROM --platform=$TARGETPLATFORM ${USERNAME}/php:nightly-${BASE}-alpine
+FROM --platform=$TARGETPLATFORM ${USERNAME}/php:${PHP_VERSION}-${BASE}-alpine
 
 # install composer
-
-ARG VCS_REF="unknow"
-
-LABEL org.opencontainers.image.revision=$VCS_REF \
-      org.opencontainers.image.source="https://github.com/khs1994-docker/php"
 
 ENV COMPOSER_DEP_APKS \
       git \
@@ -61,3 +56,8 @@ RUN --mount=type=bind,from=composer:2.5.8,source=/usr/bin/composer,target=/opt/b
 ENTRYPOINT ["/docker-entrypoint.composer"]
 
 CMD ["composer"]
+
+ARG VCS_REF="unknow"
+
+LABEL org.opencontainers.image.revision=$VCS_REF \
+      org.opencontainers.image.source="https://github.com/khs1994-docker/php"

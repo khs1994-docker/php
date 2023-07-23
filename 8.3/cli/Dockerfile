@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:labs
-ARG PHP_VERSION=8.2.5
+ARG PHP_VERSION=8.3.0beta1
 
 FROM --platform=$TARGETPLATFORM php:${PHP_VERSION}-alpine as upstream
 
-FROM --platform=$TARGETPLATFORM alpine:3.17
+FROM --platform=$TARGETPLATFORM alpine:3.18
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
 ENV TZ=Asia/Shanghai \
     APP_ENV=development
 
-ARG PHP_VERSION=8.2.5
+ARG PHP_VERSION=8.3.0beta1
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
@@ -366,8 +366,8 @@ ENV PECL_RUN_DEPS \
 ENV PECL_EXTENSION \
       # mongodb \
       # https://github.com/mongodb/mongo-php-driver/archive/master.tar.gz \
-      igbinary \
-      # https://github.com/igbinary/igbinary/archive/master.tar.gz \
+      # igbinary \
+      https://github.com/igbinary/igbinary/archive/master.tar.gz \
       # redis \
       https://github.com/phpredis/phpredis/archive/develop.tar.gz \
       memcached \
