@@ -96,9 +96,9 @@ ENV PHP_EXTRA_CONFIGURE_ARGS \
         --with-bz2=shared \
         # --with-tidy=shared \
         --with-gmp=shared \
-        --with-kerberos \
         # --with-imap=shared \ # 8.4 removed # https://hub.nuaa.cf/php/php-src/commit/f62f6a6d4b9567530775d684db55e9990952c737
-        #    --with-imap-ssl \ # 8.4 removed # https://hub.nuaa.cf/php/php-src/commit/f62f6a6d4b9567530775d684db55e9990952c737
+        #    --with-imap-ssl \
+        #    --with-kerberos \
         --with-pic \
         --with-enchant=shared \
         --enable-fileinfo=shared \
