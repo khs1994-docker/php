@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform=$TARGETPLATFORM alpine:3.18 as php
+FROM --platform=$TARGETPLATFORM alpine:3.19 as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -224,6 +224,7 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
   && export CFLAGS="$PHP_CFLAGS" \
             CPPFLAGS="$PHP_CPPFLAGS" \
             LDFLAGS="$PHP_LDFLAGS" \
+            PHP_BUILD_PROVIDER='https://github.com/khs1994-docker/php' \
             ARGON2_LIBS="-largon2" \
             ARGON2_CFLAGS="-I/usr/include" \
   # && docker-php-source extract \
