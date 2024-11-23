@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform=$TARGETPLATFORM alpine:3.19
+FROM --platform=$TARGETPLATFORM alpine:3.20
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -32,7 +32,6 @@ ENV PHPIZE_DEPS \
       file \
       g++ \
       gcc \
-      libc-dev \
       make \
       pkgconf \
       re2c
