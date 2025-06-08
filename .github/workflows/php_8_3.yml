@@ -54,7 +54,7 @@ jobs:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         GHCR_IO_TOKEN: ${{secrets.GHCR_IO_TOKEN}}
         CODING_DOCKER_PASSWORD: ${{secrets.CODING_DOCKER_PASSWORD}}
-        ARM: ${{ matrix.DIST == '24.04-arm' && 'true' || 'false' }}
+        ARM: ${{ matrix.DIST == '24.04-arm' }}
     - uses: docker-practice/actions-setup-docker@master
       with:
         docker_channel: test
