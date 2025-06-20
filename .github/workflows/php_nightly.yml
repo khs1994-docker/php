@@ -67,7 +67,6 @@ jobs:
             export PLATFORM=linux/amd64,linux/arm64; \
             IS_PUSH=--push; \
             mirror="${add_mirror}"; \
-          fi; \
         else \
           IS_PUSH=--push ; \
           DOCKER_HUB_USERNAME=$DOCKER_HUB_USERNAME_TEST; \
