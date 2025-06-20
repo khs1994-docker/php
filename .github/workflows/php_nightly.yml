@@ -70,7 +70,7 @@ jobs:
         else \
           IS_PUSH=--push ; \
           DOCKER_HUB_USERNAME=$DOCKER_HUB_USERNAME_TEST; \
-          && mirror="${add_mirror}"; \
+          mirror="${add_mirror}"; \
         fi
 
         VCS_REF=`git rev-parse --short HEAD`
