@@ -1,5 +1,5 @@
-# syntax=ghcr.io/dpsigs/docker-dockerfile-upstream:master-labs
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/library/alpine:3.22 as php
+# syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/alpine:3.22 as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -135,7 +135,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 # COPY --from=php:alpine /usr/local/bin/docker-php-ext-install /usr/local/bin/
 
 ARG PHP_GIT=https://github.com/php/php-src.git
-# ARG PHP_GIT=https://github.com.cnpmjs.org/php/php-src
+# ARG PHP_GIT=https://mirror/php/php-src
 
 RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,rw \
   set -xe \
@@ -290,7 +290,6 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            pdo_mysql \
                            pdo_pgsql \
                            pgsql \
-                           # pspell \ # 8.4 removed # https://github.com/php/php-src/commit/b035cb6c8e31bea351f169b3e9f34fdc562e77e1
                            shmop \
                            # snmp \
                            # soap \
@@ -301,8 +300,6 @@ RUN --mount=type=bind,from=php:fpm-alpine,source=/usr/local/bin,target=/opt/bin,
                            sysvshm \
                            # tidy \
                            # xsl \
-                           # opcache 已默认安装，需要自行载入
-                           # opcache \
                            zip \
                            ffi \
                            ${PHP_EXTENSION_EXTRA:-} \
@@ -393,7 +390,7 @@ ENV PECL_RUN_DEPS \
       zlib \
       zstd-libs
 
-RUN --mount=type=bind,from=ghcr.io/khs1994-docker/library/php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
+RUN --mount=type=bind,from=ghcr.io/khs1994-docker/docker.io/library/php:alpine,source=/usr/local/bin,target=/opt/bin,rw \
     --mount=type=cache,target=/usr/local/lib/php/test \
     --mount=type=cache,target=/usr/local/lib/php/doc \
     --mount=type=bind,from=ghcr.io/php/pie:bin,source=/,target=/opt/bin2,rw \

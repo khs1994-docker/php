@@ -1,7 +1,7 @@
-# syntax=ghcr.io/dpsigs/docker-dockerfile-upstream:master-labs
+# syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
 ARG PHP_VERSION=8.1.33
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/library/php:${PHP_VERSION}-alpine as upstream
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/php:${PHP_VERSION}-alpine as upstream
 
 FROM --platform=$TARGETPLATFORM alpine:3.22
 
@@ -199,6 +199,8 @@ RUN --mount=type=bind,from=upstream,source=/usr/src,target=/usr/local/src,rw \
           # net-snmp-dev \
           openldap-dev \
           # libavif-dev \
+          patch \
+		      patchutils \
           ${APK_DEV_EXTRA:-} \
   \
   && rm -vf /usr/include/iconv.h \
@@ -219,6 +221,18 @@ RUN --mount=type=bind,from=upstream,source=/usr/src,target=/usr/local/src,rw \
   # && apk del --no-network patch \
   # && rm -rf 1.diff \
   # && ./buildconf --force \
+  cd /usr/src/php; \
+  # Apply patches; see https://github.com/docker-library/php/pull/1552
+	# https://github.com/php/php-src/issues/11678
+	curl -fL 'https://github.com/php/php-src/commit/577b8ae4226368e66fee7a9b5c58f9e2428372fc.patch?full_index=1' -o 11678.patch; \
+	echo '6edc20c3bb3e7cc13515abce7f2fffa8ebea6cf7469abfbc78fcdc120350b239 *11678.patch' | sha256sum -c -; \
+	patch -p1 < 11678.patch; \
+	rm 11678.patch; \
+	# https://github.com/php/php-src/issues/14834
+	curl -fL 'https://github.com/php/php-src/commit/67259e451d5d58b4842776c5696a66d74e157609.patch?full_index=1' -o 14834.patch; \
+	echo 'ed10a1b254091ad676ed204e55628ecbd6c8962004d6185a1821cedecd526c0f *14834.patch' | sha256sum -c -; \
+	filterdiff -x '*/NEWS' 14834.patch | patch -p1; \
+	rm 14834.patch \
   \
   && ./configure \
     --build="$gnuArch" \
@@ -386,8 +400,7 @@ RUN --mount=type=bind,from=upstream,source=/usr/local/bin,target=/opt/bin,rw \
       && pickle install \
          xdebug \
          # https://github.com/xdebug/xdebug/archive/master.tar.gz \
-# https://github.com/tideways/php-xhprof-extension.git
-         https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+         https://github.com/longxinH/xhprof/archive/refs/heads/master.tar.gz \
          -n --defaults --no-write --strip --cleanup \
       && apk del --no-network .pecl_build_deps \
       && rm -rf /tmp/* \

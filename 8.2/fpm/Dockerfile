@@ -1,7 +1,7 @@
-# syntax=ghcr.io/dpsigs/docker-dockerfile-upstream:master-labs
+# syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
 ARG PHP_VERSION=8.2.29
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/library/php:${PHP_VERSION}-fpm-alpine3.22 AS php
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/php:${PHP_VERSION}-fpm-alpine3.22 AS php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -161,8 +161,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && pickle install \
              xdebug \
              # https://github.com/xdebug/xdebug/archive/master.tar.gz \
-# https://github.com/tideways/php-xhprof-extension.git
-             https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+             https://github.com/longxinH/xhprof/archive/refs/heads/master.tar.gz \
              -n --defaults --strip --cleanup --no-write \
         && pickle install opcache \
         # && docker-php-ext-enable opcache \

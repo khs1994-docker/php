@@ -1,9 +1,9 @@
-# syntax=ghcr.io/dpsigs/docker-dockerfile-upstream:master-labs
+# syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
 ARG PHP_VERSION=8.2.29
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/library/php:${PHP_VERSION}-alpine as upstream
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/php:${PHP_VERSION}-alpine as upstream
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/library/alpine:3.22
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/alpine:3.22
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -395,8 +395,7 @@ RUN --mount=type=bind,from=upstream,source=/usr/local/bin,target=/opt/bin,rw \
       && pickle install \
          xdebug \
          # https://github.com/xdebug/xdebug/archive/master.tar.gz \
-# https://github.com/tideways/php-xhprof-extension.git
-         https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+         https://github.com/longxinH/xhprof/archive/refs/heads/master.tar.gz \
          -n --defaults --no-write --strip --cleanup \
       && apk del --no-network .pecl_build_deps \
       && rm -rf /tmp/* \
