@@ -1,5 +1,5 @@
 # syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
-ARG PHP_VERSION=8.1.34
+ARG PHP_VERSION=8.6.0RC2
 ARG USERNAME=khs1994
 ARG BASE=cli
 
@@ -7,8 +7,8 @@ FROM --platform=$TARGETPLATFORM ghcr.io/${USERNAME}/php:${PHP_VERSION}-${BASE}-a
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
-ENV NGINX_UNIT_VERSION=1.33.0
-# ENV NGINX_UNIT_VERSION=master
+# ENV NGINX_UNIT_VERSION=1.35.0
+ENV NGINX_UNIT_VERSION=master
 
 RUN set -x \
   && mkdir -p /usr/src/unit \
@@ -22,8 +22,8 @@ RUN set -x \
                                   pcre2-dev \
                                   patch \
   \
-  # && curl -L https://patch-diff.githubusercontent.com/raw/nginx/unit/pull/474.diff -O \
-  # && patch -p1 < 474.diff \
+  # && curl -L https://patch-diff.githubusercontent.com/raw/nginx/unit/pull/713.diff -O \
+  # && patch -p1 < 713.diff \
   \
   && ./configure --prefix=/usr/local/nginx-unit --openssl \
   && ./configure php \

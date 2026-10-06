@@ -1,18 +1,18 @@
 # syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
-ARG PHP_VERSION=8.5.0
+ARG PHP_VERSION=8.5.11
 
 ARG REGISTRY_PREFIX=ghcr.io/khs1994-docker/docker.io
 
 FROM --platform=$TARGETPLATFORM ${REGISTRY_PREFIX}/library/php:${PHP_VERSION}-alpine AS upstream
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/alpine:3.22
+FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/alpine:3.24
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
 ENV TZ=Asia/Shanghai \
     APP_ENV=development
 
-ARG PHP_VERSION=8.5.0
+ARG PHP_VERSION=8.5.11
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
@@ -389,7 +389,7 @@ RUN --mount=type=bind,from=upstream,source=/usr/local/bin,target=/opt/bin,rw \
                      php-memcached/php-memcached:dev-master \
                      --enable-memcached-igbinary \
       && pie -n install ${PIE_CONFIG} \
-                     xdebug/xdebug:dev-master \
+                     xdebug/xdebug \
       && docker-php-ext-enable zstd \
       && echo "extension=redis" > $PHP_INI_DIR/conf.d/docker-php-ext-z-redis.ini \
       && echo "extension=memcached" > $PHP_INI_DIR/conf.d/docker-php-ext-z-memcached.ini \

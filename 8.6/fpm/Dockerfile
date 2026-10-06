@@ -1,7 +1,9 @@
 # syntax=ghcr.io/khs1994-docker/docker.io/docker/dockerfile-upstream:master-labs
-ARG PHP_VERSION=8.1.34
+ARG PHP_VERSION=8.6.0RC2
 
-FROM --platform=$TARGETPLATFORM ghcr.io/khs1994-docker/docker.io/library/php:${PHP_VERSION}-fpm-alpine3.22 AS php
+ARG REGISTRY_PREFIX=ghcr.io/khs1994-docker/docker.io
+
+FROM --platform=$TARGETPLATFORM ${REGISTRY_PREFIX}/library/php:${PHP_VERSION}-fpm-alpine3.24 as php
 
 LABEL maintainer="khs1994-docker/lnmp <khs1994@khs1994.com>"
 
@@ -25,7 +27,6 @@ ENV PHP_EXTENSION \
       gd \
       gettext \
       gmp \
-      imap \
       intl \
       mysqli \
       pcntl \
@@ -48,8 +49,8 @@ ENV PECL_EXTENSION \
       # https://github.com/mongodb/mongo-php-driver/archive/master.tar.gz \
       # igbinary \
       https://github.com/igbinary/igbinary/archive/master.tar.gz \
-      # redis \
-      https://github.com/phpredis/phpredis/archive/develop.tar.gz \
+      redis \
+      # https://github.com/phpredis/phpredis/archive/develop.tar.gz \
       memcached \
 # 安装测试版的扩展，可以在扩展名后加 -beta
       # xdebug-beta \
@@ -60,7 +61,8 @@ ENV PECL_EXTENSION \
 
 ARG ALPINE_URL=dl-cdn.alpinelinux.org
 
-RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
+RUN --mount=type=bind,from=ghcr.io/php/pie:nightly-bin,source=/,target=/opt/bin2,rw \
+    sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
       && set -xe \
       \
       # && apk add --no-cache patch \
@@ -91,7 +93,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          enchant2 \
                          c-client \
                          icu-libs \
-                         # gnu-libiconv \
                          zstd-libs \
 # https://github.com/xdebug/xdebug/pull/835
                          linux-headers \
@@ -118,7 +119,6 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          gmp-dev \
                          bzip2-dev \
                          enchant2-dev \
-                         imap-dev \
                          gettext-dev \
                          libwebp-dev \
                          icu-dev \
@@ -130,49 +130,55 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
                          # libxslt-dev \
                          # yaml-dev \
         && apk add --no-cache --virtual .php-fpm-run-deps $PHP_FPM_RUN_DEPS \
-        && if ! [ -f /usr/bin/gnu-iconv ];then \
-              apk add --no-cache --repository http://${ALPINE_URL}/alpine/v3.13/community/ gnu-libiconv=1.15-r3;fi \
         && apk add --no-cache --virtual .php-fpm-build-deps $PHP_FPM_BUILD_DEPS \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
-        && curl -fsSL -o /usr/local/bin/pickle \
-           https://github.com/khs1994-php/pickle/releases/download/nightly/pickle-debug.phar \
-        && chmod +x /usr/local/bin/pickle \
 # 安装内置扩展
         && docker-php-source extract \
+        && curl -fsSL -o /tmp/igbinary.tar.gz https://github.com/igbinary/igbinary/archive/master.tar.gz \
+        && mkdir -p /usr/src/php/ext/igbinary \
+        && tar -zxvf /tmp/igbinary.tar.gz -C /usr/src/php/ext/igbinary --strip 1 \
         && docker-php-ext-configure zip \
                                     --with-zip \
-        && docker-php-ext-install zip \
-        && strip --strip-all $(php-config --extension-dir)/zip.so \
-        # && docker-php-ext-configure gd \
-        && echo " \
+        && docker-php-ext-configure gd \
                                         --disable-gd-jis-conv \
                                         --with-freetype \
                                         --with-jpeg \
                                         --with-webp \
                                         --with-xpm \
-                                        --with-avif" > /tmp/gd.configure.options \
-        # && docker-php-ext-install $PHP_EXTENSION \
-        && pickle install $PHP_EXTENSION -n --defaults --strip \
+                                        --with-avif \
+        && docker-php-ext-configure igbinary \
+        && docker-php-ext-install $PHP_EXTENSION gd zip igbinary \
         && docker-php-source delete \
-# 安装 PECL 扩展
-        && echo "--enable-redis-igbinary --enable-redis-zstd" > /tmp/redis.configure.options \
-        && echo "--enable-memcached-igbinary" > /tmp/memcached.configure.options \
-        && echo "--with-libzstd" > /tmp/zstd.configure.options \
-        && pickle install $PECL_EXTENSION -n --defaults \
-           --strip --cleanup \
-# 默认不启用的扩展
-        && pickle install \
-             xdebug \
-             # https://github.com/xdebug/xdebug/archive/master.tar.gz \
-             # https://github.com/longxinH/xhprof/archive/refs/heads/master.tar.gz \
-             https://github.com/khs1994/xhprof/archive/refs/heads/patch-1.tar.gz \
-# https://github.com/tideways/php-xhprof-extension.git
-             # https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-             -n --defaults --strip --cleanup --no-write \
-        && pickle install opcache \
-        # && docker-php-ext-enable opcache \
-        && apk del --no-network .phpize-deps .php-fpm-build-deps \
+        && export PATH=$PATH:/opt/bin:/opt/bin2 \
+        && export PIE_CONFIG="--with-php-config=/usr/local/bin/php-config \
+                            --with-php-path=/usr/local/bin/php \
+                            --with-phpize-path=/usr/local/bin/phpize \
+                            --skip-enable-extension \
+                            --force" \
+        && pie -n install ${PIE_CONFIG} \
+                      kjdev/zstd \
+        # && pie -n install ${PIE_CONFIG} \
+        #                igbinary/igbinary:dev-main \
+        && pie -n install ${PIE_CONFIG} \
+                      phpredis/phpredis:dev-develop \
+                      --enable-redis-igbinary --enable-redis-zstd \
+        && pie -n install ${PIE_CONFIG} \
+                      php-memcached/php-memcached:dev-master \
+                      --enable-memcached-igbinary \
+        && pie -n install ${PIE_CONFIG} \
+                      xdebug/xdebug:dev-master \
+        && docker-php-ext-enable zstd \
+                                redis \
+                                memcached \
+        && strip --strip-all $(php-config --extension-dir)/redis.so \
+        && strip --strip-all $(php-config --extension-dir)/memcached.so \
+        && strip --strip-all $(php-config --extension-dir)/zstd.so \
+        && strip --strip-all $(php-config --extension-dir)/xdebug.so \
         && rm -rf /tmp/* \
+        && rm -rf /root/.pie \
+        && rm -rf /root/.composer \
+        && rm -rf /usr/src/php \
+        && apk del --no-network .phpize-deps .php-fpm-build-deps \
 # 创建日志文件夹
         && mkdir -p /var/log/php-fpm \
         && ln -sf /dev/stdout /var/log/php-fpm/access.log \
@@ -182,11 +188,9 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_URL}/g" /etc/apk/repositories \
         && rm -rf /usr/local/lib/php/.registry/.channel.pecl.php.net/* \
         && php -m \
         && ls -la $(php-config --extension-dir) \
-        && LD_PRELOAD="/usr/lib/preloadable_libiconv.so php" php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));' \
+        && php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol '\''€'\''."));' \
 # smoke test
         && php --version
-
-ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so php"
 
 WORKDIR /app
 
